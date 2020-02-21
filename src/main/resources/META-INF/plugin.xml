@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>org.rezane.IntelliJ-IDEA-test-run-plugin</id>
+    <name>100% testup time</name>
+    <version>1.0-SNAPSHOT</version>
+    <vendor email="wibrach@gmail.com" url="github.com/rezane">Rezane studio</vendor>
+
+    <description><![CDATA[
+    Plugin for minimizing running unit tests
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <group id="mainScreen" text="Tester Plugin" description="Main window of plugin">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action class="ideaController.RunTestButton" id="runtest" text="Run Test"/>
+            <action class="ideaController.SelectTestsFolderButton" id="selectTestFolder" text="Select tests folder"/>
+        </group>
+    </actions>
+</idea-plugin>
