@@ -1,0 +1,23 @@
+<idea-plugin>
+  <change-notes>
+      Add change notes here.&lt;br&gt;
+      &lt;em&gt;most HTML tags may be used&lt;/em&gt;</change-notes>
+  <idea-version since-build="193.5233" until-build="193.*"/>
+  <id>org.rezane.IntelliJ-IDEA-test-run-plugin</id>
+  <name>100% testup time</name>
+  <version>1.0-SNAPSHOT</version>
+  <vendor email="wibrach@gmail.com" url="github.com/rezane">Rezane studio</vendor>
+  <description>
+    Plugin for minimizing running unit tests
+    </description>
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.java</depends>
+  <extensions defaultExtensionNs="com.intellij"/>
+  <actions>
+    <group id="mainScreen" text="Tester Plugin" description="Main window of plugin">
+      <add-to-group group-id="MainMenu" anchor="last"/>
+      <action class="pluginCommunicationHandler.RunTestButton" id="runtest" text="Run Test" icon="/META-INF/logo.png"/>
+      <action class="pluginCommunicationHandler.SelectTestsFolderButton" id="selectTestFolder" text="Select tests folder"/>
+    </group>
+  </actions>
+</idea-plugin>

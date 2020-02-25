@@ -2,6 +2,7 @@ package testController;
 
 import com.intellij.openapi.project.Project;
 import ide.IDEA;
+import ide.PsiHandler;
 import ide.Tester;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -19,25 +20,28 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMetho
 public class MainTestController {
 
     //https://github.com/rastocny/mock-management/blob/master/src/mock/manager/data/psiparser/PsiParser.java
-    public List<PsiClass> getAllClasses(Project project) {
-        String[] classNames = PsiShortNamesCache.getInstance(project).getAllClassNames();
-        PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
-        List<PsiClass> psiClasses = new ArrayList<>();
 
-        for (String className : classNames) {
-            psiClasses.addAll(Arrays.asList(cache.getClassesByName(className, GlobalSearchScope.projectScope(project))));
-        }
-        return psiClasses;
-    }
 
-    public void runAllTests(String path) throws InterruptedException {
+    public void runAllTests(String path, Project project) throws InterruptedException {
         File root = new File(path);
-        for (File file : Objects.requireNonNull(root.listFiles())) {
-            IDEA methodGather = new IDEA();
-            Tester tester = new Tester(methodGather.getAllMethodsByClass(file.getClass()));
-            tester.runTests();
+//        for (File file : Objects.requireNonNull(root.listFiles())) {
+//            IDEA methodGather = new IDEA();
+//            Tester tester = new Tester(methodGather.getAllMethodsByClass(file.getClass()));
+//            tester.runTests();
+//        }
+        PsiHandler psiHandler = new PsiHandler();
+        List<PsiMethod> tests = psiHandler.getAllTests(project);
+        for (PsiMethod test : tests) {
+            System.out.println(test.getName());
+            System.out.println(test.getContainingClass().getName());
+            HashSet<PsiMethod> x = psiHandler.traverseBodyToFindAllMethodUsages(test.getBody());
+            for (PsiMethod y : x){
+                if (y == null){
+                    continue;
+                }
+                System.out.println(y.getName());
+            }
+            System.out.println("-------");
         }
-
-
     }
 }
