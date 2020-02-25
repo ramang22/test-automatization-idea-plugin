@@ -9,6 +9,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
+import test.Test;
 import test.UnitTests;
 
 import java.io.File;
@@ -31,17 +32,14 @@ public class MainTestController {
 //        }
         PsiHandler psiHandler = new PsiHandler();
         List<PsiMethod> tests = psiHandler.getAllTests(project);
+        List<Test> x = new ArrayList<>();
         for (PsiMethod test : tests) {
-            System.out.println(test.getName());
-            System.out.println(test.getContainingClass().getName());
-            HashSet<PsiMethod> x = psiHandler.traverseBodyToFindAllMethodUsages(test.getBody());
-            for (PsiMethod y : x){
-                if (y == null){
-                    continue;
-                }
-                System.out.println(y.getName());
-            }
+            HashSet<PsiMethod> a = psiHandler.traverseBodyToFindAllMethodUsages(test.getBody());
+            x.add(new Test(test, Objects.requireNonNull(test.getContainingClass()),a));
             System.out.println("-------");
+        }
+        for (Test t : x){
+            t.printTestParams();
         }
     }
 }

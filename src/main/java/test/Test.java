@@ -3,6 +3,7 @@ package test;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -12,18 +13,30 @@ public class Test {
     private PsiClass test_class;
     private String test_class_name;
     private HashSet<PsiMethod> containedMethods;
-    private List<PsiMethod> containedMethods_names;
+    private List<String> containedMethods_names;
 
-    Test(PsiMethod method, PsiClass test_class, HashSet<PsiMethod> methods){
+    public Test(PsiMethod method, PsiClass test_class, HashSet<PsiMethod> methods){
         this.method = method;
         this.test_class = test_class;
         this.containedMethods = methods;
         this.name = method.getName();
         this.test_class_name = test_class.getName();
-        //this.containedMethods_names = new List<PsiMethod>();
+        this.containedMethods_names = new ArrayList<>();
         for (PsiMethod x : this.containedMethods){
-
+            if (x == null)
+                continue;
+            this.containedMethods_names.add(x.getName());
         }
+    }
+
+    public void printTestParams(){
+        System.out.println(String.format("Test : %s",this.name));
+        System.out.println(String.format("Test Class : %s",this.test_class_name));
+        System.out.println("Contained Methods:");
+        for (String methodName : this.containedMethods_names){
+            System.out.println(String.format("\tMethod : %s",methodName));
+        }
+        System.out.println("-------");
     }
 
     public String getName() {
@@ -66,11 +79,11 @@ public class Test {
         this.containedMethods = containedMethods;
     }
 
-    public List<PsiMethod> getContainedMethods_names() {
+    public List<String> getContainedMethods_names() {
         return containedMethods_names;
     }
 
-    public void setContainedMethods_names(List<PsiMethod> containedMethods_names) {
+    public void setContainedMethods_names(List<String> containedMethods_names) {
         this.containedMethods_names = containedMethods_names;
     }
 
