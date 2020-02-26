@@ -21,8 +21,9 @@
         <!-- Add your actions here -->
         <group id="mainScreen" text="Tester Plugin" description="Main window of plugin" >
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action class="pluginCommunicationHandler.RunTestButton" id="runtest" text="Run Test" icon="/META-INF/logo.png"/>
+            <action class="pluginCommunicationHandler.RunTestButton" id="runtest" text="Run Test" icon="/META-INF/logo24x24.png"/>
             <action class="pluginCommunicationHandler.SelectTestsFolderButton" id="selectTestFolder" text="Select tests folder"/>
+            <action class="pluginCommunicationHandler.PluginSettings" id="pluginSettings" text="Settings"/>
         </group>
     </actions>
 </idea-plugin>
