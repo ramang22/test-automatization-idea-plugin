@@ -2,14 +2,36 @@
   <component name="RecentProjectsManager">
     <option name="additionalInfo">
       <map>
-        <entry key="$USER_HOME$/Documents/Developer/parallelJUnitTestRunner">
+        <entry key="$USER_HOME$/Documents/Developer/IntelliJ-IDEA-test-run-plugin">
           <value>
-            <RecentProjectMetaInfo opened="true" projectWorkspaceId="1Uk84C7Xtv0HvV179HOBOWX08ou">
+            <RecentProjectMetaInfo projectWorkspaceId="1YFj4Hkj0xprg3SwIJlehl8AqHj">
               <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
               <option name="build" value="IC-193.5233.102" />
-              <option name="buildTimestamp" value="1574898420870" />
+              <option name="buildTimestamp" value="1574898446854" />
               <option name="productionCode" value="IC" />
-              <option name="projectOpenTimestamp" value="1582722906204" />
+              <option name="projectOpenTimestamp" value="1583312911261" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Developer/parallelJUnitTestRunner">
+          <value>
+            <RecentProjectMetaInfo projectWorkspaceId="1Uk84C7Xtv0HvV179HOBOWX08ou">
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="build" value="IC-193.5233.102" />
+              <option name="buildTimestamp" value="1574898432511" />
+              <option name="productionCode" value="IC" />
+              <option name="projectOpenTimestamp" value="1584305836096" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Developer/tests_forTestPlugin">
+          <value>
+            <RecentProjectMetaInfo opened="true" projectWorkspaceId="1ZB5TTEi83Gv1HBOx8zuNc806tC">
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="build" value="IC-193.5233.102" />
+              <option name="buildTimestamp" value="1574898442478" />
+              <option name="productionCode" value="IC" />
+              <option name="projectOpenTimestamp" value="1584475589000" />
             </RecentProjectMetaInfo>
           </value>
         </entry>
@@ -17,7 +39,9 @@
     </option>
     <option name="recentPaths">
       <list>
+        <option value="$USER_HOME$/Documents/Developer/tests_forTestPlugin" />
         <option value="$USER_HOME$/Documents/Developer/parallelJUnitTestRunner" />
+        <option value="$USER_HOME$/Documents/Developer/IntelliJ-IDEA-test-run-plugin" />
       </list>
     </option>
   </component>

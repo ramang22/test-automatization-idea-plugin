@@ -15,8 +15,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <postStartupActivity implementation="pluginCommunicationHandler.StartUpActivity"/>
     </extensions>
-
     <actions>
         <!-- Add your actions here -->
         <group id="mainScreen" text="Tester Plugin" description="Main window of plugin" >

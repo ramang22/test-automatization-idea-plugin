@@ -1,0 +1,17 @@
+<conversion>
+  <applied-converters>
+    <converter id="kotlin-non-jvm-source-roots" />
+    <converter id="junit-to-android-junit-configurations" />
+    <converter id="android-sdk-library" />
+    <converter id="android-module-to-java-module" />
+    <converter id="android-proguard-options" />
+  </applied-converters>
+  <project-files>
+    <file path="/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/.idea/gradle.xml" timestamp="1582062427343" />
+    <file path="/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/.idea/jarRepositories.xml" timestamp="1582059807696" />
+    <file path="/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/.idea/vcs.xml" timestamp="1582198912469" />
+    <file path="/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/.idea/misc.xml" timestamp="1583307430353" />
+    <file path="/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/.idea/workspace.xml" timestamp="1583312937141" />
+    <file path="/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/.idea/uiDesigner.xml" timestamp="1582191638819" />
+  </project-files>
+</conversion>

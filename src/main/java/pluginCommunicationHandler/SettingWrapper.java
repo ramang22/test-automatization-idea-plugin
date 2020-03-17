@@ -50,8 +50,8 @@ public class SettingWrapper extends DialogWrapper {
                 FileChooser.chooseFile(fd,project,null, virtualFile -> {
                     MainTestController main = new MainTestController();
                     try {
-                        main.runAllTests(virtualFile.getPath(),project);
-                    } catch (InterruptedException ex) {
+                        main.runAllTests();
+                    } catch (InterruptedException | NoSuchMethodException ex) {
                         ex.printStackTrace();
                     }
                     Messages.showMessageDialog(project,virtualFile.getPath(),"Path",Messages.getInformationIcon());

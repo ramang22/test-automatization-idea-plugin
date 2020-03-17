@@ -23,8 +23,8 @@ public class SelectTestsFolderButton extends AnAction {
         FileChooser.chooseFile(fd,e.getProject(),null, virtualFile -> {
             MainTestController main = new MainTestController();
             try {
-              main.runAllTests(virtualFile.getPath(),e.getProject());
-            } catch (InterruptedException ex) {
+              main.runAllTests();
+            } catch (InterruptedException | NoSuchMethodException ex) {
                 ex.printStackTrace();
             }
             Messages.showMessageDialog(e.getProject(),virtualFile.getPath(),"Path",Messages.getInformationIcon());

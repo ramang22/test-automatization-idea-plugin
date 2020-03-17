@@ -27,8 +27,8 @@ public class ParallelTestExecution implements Runnable {
 
     public void stopTesting(List<TestRunner> newTests) {
         tests.clear();
-        System.out.println("Adding new tests");
-        tests.addAll(newTests);
+        System.out.println("Testing finished");
+
     }
 
     public void stop() {

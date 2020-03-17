@@ -12,8 +12,8 @@ public class RunTestButton extends AnAction {
         Messages.showMessageDialog(e.getProject(), "Ahoj", "HMM",Messages.getQuestionIcon());
         MainTestController main = new MainTestController();
         try {
-            main.runAllTests("",e.getProject());
-        } catch (InterruptedException ex) {
+            main.runAllTests();
+        } catch (InterruptedException | NoSuchMethodException ex) {
             ex.printStackTrace();
         }
     }

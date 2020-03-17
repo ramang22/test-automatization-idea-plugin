@@ -1,6 +1,8 @@
 package testController;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.util.PsiTreeUtil;
+import ide.CodeChangeListener;
 import ide.IDEA;
 import ide.PsiHandler;
 import ide.Tester;
@@ -9,8 +11,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
+import pluginResources.PluginSingleton;
+import pluginResources.TestSingleton;
 import test.Test;
 import test.UnitTests;
+import testRunner.TestRunner;
 
 import java.io.File;
 import java.net.URL;
@@ -23,23 +28,33 @@ public class MainTestController {
     //https://github.com/rastocny/mock-management/blob/master/src/mock/manager/data/psiparser/PsiParser.java
 
 
-    public void runAllTests(String path, Project project) throws InterruptedException {
-        File root = new File(path);
-//        for (File file : Objects.requireNonNull(root.listFiles())) {
-//            IDEA methodGather = new IDEA();
-//            Tester tester = new Tester(methodGather.getAllMethodsByClass(file.getClass()));
-//            tester.runTests();
-//        }
-        PsiHandler psiHandler = new PsiHandler();
-        List<PsiMethod> tests = psiHandler.getAllTests(project);
-        List<Test> x = new ArrayList<>();
-        for (PsiMethod test : tests) {
-            HashSet<PsiMethod> a = psiHandler.traverseBodyToFindAllMethodUsages(test.getBody());
-            x.add(new Test(test, Objects.requireNonNull(test.getContainingClass()),a));
-            System.out.println("-------");
+    public void runAllTests() throws InterruptedException, NoSuchMethodException {
+
+
+        List<PsiTreeChangeEvent> events = TestSingleton.getInstance().getEvents();
+        HashSet<String> methodsForTesting = new HashSet<>();
+        for (PsiTreeChangeEvent event : events) {
+            PsiElement psiTreeElement = event.getParent();
+            PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ? (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
+            if (parentMethod != null) {
+                methodsForTesting.add(parentMethod.getName());
+
+            }
         }
-        for (Test t : x){
-            t.printTestParams();
+
+        HashSet<String> testNames = new HashSet<>();
+        for (String method : methodsForTesting) {
+            testNames.addAll(TestSingleton.getInstance().getTestMap().get(method));
         }
+
+        //todo prioritization
+
+        List<TestRunner> tests = new ArrayList<>();
+        for (String test : testNames ){
+            tests.add(new TestRunner(Test.class.getMethod(test)));
+        }
+
+        PluginSingleton.getInstance().getTester().setTests(tests);
+        PluginSingleton.getInstance().getTester().runTests();
     }
 }

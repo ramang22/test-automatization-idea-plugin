@@ -11,7 +11,9 @@
     Plugin for minimizing running unit tests
     </description>
   <depends>com.intellij.modules.platform</depends>
-  <extensions defaultExtensionNs="com.intellij"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="pluginCommunicationHandler.StartUpActivity"/>
+  </extensions>
   <actions>
     <group id="mainScreen" text="Tester Plugin" description="Main window of plugin">
       <add-to-group group-id="MainMenu" anchor="last"/>

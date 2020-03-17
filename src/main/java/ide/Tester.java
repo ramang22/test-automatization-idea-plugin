@@ -28,4 +28,12 @@ public class Tester {
 //        executor.terminateTestImmediately();
 //        queueMaster.terminateService();
     }
+
+    public List<TestRunner> getTests() {
+        return tests;
+    }
+
+    public void setTests(List<TestRunner> tests) {
+        this.tests = tests;
+    }
 }
