@@ -62,7 +62,24 @@ public class MainTestController {
         for (String method : methodsForTesting) {
             testNames.addAll(TestSingleton.getInstance().getTestMap().get(method));
         }
-
+//
+//
 //        //todo prioritization
+//
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                .selectors(
+                        //selectPackage("test"),
+                        //selectClass(FirstUnitTest.class),
+                        selectMethod("test.UnitTests#whenSomethingElse_thenSomethingElse")
+                )
+                .build();
+        Launcher launcher = LauncherFactory.create();
+        SummaryGeneratingListener listener = new SummaryGeneratingListener();
+        launcher.registerTestExecutionListeners(listener);
+        launcher.execute(request);
+        TestExecutionSummary summary = listener.getSummary();
+        long result = summary.getTestsSucceededCount();
+        System.out.println(result);
+
     }
 }
