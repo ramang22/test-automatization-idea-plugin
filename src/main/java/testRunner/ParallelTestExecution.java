@@ -37,7 +37,7 @@ public class ParallelTestExecution implements Runnable {
 
     @Override
     public void run() {
-        while (running) {
+//        while (running) {
             try {
                 TestRunner test = tests.take();
                 test.run();
@@ -45,7 +45,7 @@ public class ParallelTestExecution implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+//        }
     }
 
     public BlockingQueue<TestRunner> getTests() {

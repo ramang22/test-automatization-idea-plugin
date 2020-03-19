@@ -1,6 +1,7 @@
 package testController;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import ide.CodeChangeListener;
 import ide.IDEA;
@@ -11,6 +12,12 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 import test.Test;
@@ -40,21 +47,22 @@ public class MainTestController {
                 methodsForTesting.add(parentMethod.getName());
 
             }
+//            try {
+//                PsiJavaFile javaFile = (PsiJavaFile) parentMethod.getParent().getContainingFile();
+//                PsiPackage pkg = JavaPsiFacade.getInstance(PluginSingleton.getInstance().getProject()).findPackage(javaFile.getPackageName());
+//                System.out.println(pkg.getName());
+//                System.out.println(this.getClass().getCanonicalName());
+//                System.out.println(parentMethod.getContainingClass().getQualifiedName());
+//                Class c = Class.forName(parentMethod.getContainingClass().getQualifiedName());
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
         }
-
         HashSet<String> testNames = new HashSet<>();
         for (String method : methodsForTesting) {
             testNames.addAll(TestSingleton.getInstance().getTestMap().get(method));
         }
 
-        //todo prioritization
-
-        List<TestRunner> tests = new ArrayList<>();
-        for (String test : testNames ){
-            tests.add(new TestRunner(Test.class.getMethod(test)));
-        }
-
-        PluginSingleton.getInstance().getTester().setTests(tests);
-        PluginSingleton.getInstance().getTester().runTests();
+//        //todo prioritization
     }
 }

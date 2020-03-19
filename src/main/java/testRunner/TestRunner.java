@@ -36,7 +36,7 @@ public class TestRunner implements Runnable {
                 .selectors(
                         //selectPackage("test"),
                         //selectClass(FirstUnitTest.class),
-                        selectMethod(UnitTests.class, this.name)
+                        selectMethod("tests.Tests#add")
                 )
                 .build();
         Launcher launcher = LauncherFactory.create();
@@ -45,6 +45,7 @@ public class TestRunner implements Runnable {
         launcher.execute(request);
         TestExecutionSummary summary = listener.getSummary();
         result = summary.getTestsSucceededCount();
+        System.out.println(result);
         executed = 1;
     }
 

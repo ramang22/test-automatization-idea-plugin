@@ -22,7 +22,6 @@ public class UnitTests {
     @Test
     public void whenSomethingElse_thenSomethingElse() throws InterruptedException {
         Thread.sleep(1000);
-        assertTrue(false);
         assertTrue(true);
     }
 

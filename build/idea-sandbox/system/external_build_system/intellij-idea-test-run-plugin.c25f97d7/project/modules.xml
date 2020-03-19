@@ -1,9 +1,0 @@
-<project>
-  <component name="ExternalProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/IntelliJ-IDEA-test-run-plugin.iml" filepath="$PROJECT_DIR$/.idea/IntelliJ-IDEA-test-run-plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IntelliJ-IDEA-test-run-plugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/IntelliJ-IDEA-test-run-plugin.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IntelliJ-IDEA-test-run-plugin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/IntelliJ-IDEA-test-run-plugin.test.iml" />
-    </modules>
-  </component>
-</project>

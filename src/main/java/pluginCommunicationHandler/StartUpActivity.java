@@ -2,10 +2,7 @@ package pluginCommunicationHandler;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import ide.CodeChangeListener;
 import ide.PsiHandler;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +24,6 @@ public class StartUpActivity implements StartupActivity {
 
         //set project variables
         PluginSingleton.getInstance().setProject(project);
-
         //test all methods in tests
         PsiHandler psiHandler = new PsiHandler();
         List<PsiMethod> methods = psiHandler.getAllTests(project);
@@ -35,15 +31,6 @@ public class StartUpActivity implements StartupActivity {
         for (PsiMethod test : methods) {
             HashSet<PsiMethod> a = psiHandler.traverseBodyToFindAllMethodUsages(test.getBody());
             tests.add(new Test(test, Objects.requireNonNull(test.getContainingClass()), a));
-
-            try {
-                System.out.println(test.getContainingClass().getQualifiedName());
-                Class c = Class.forName(test.getContainingClass().getQualifiedName());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-
         }
 
         //create global hash map in singleton

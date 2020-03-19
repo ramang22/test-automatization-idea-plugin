@@ -24,9 +24,9 @@ public class Tester {
         executor.startTestExecution();
         QueueProcessor queueMaster = new QueueProcessor(this.tests, executor::stopTesting);
         queueMaster.executeQueueManager();
-//        Thread.sleep(2000);
-//        executor.terminateTestImmediately();
-//        queueMaster.terminateService();
+        Thread.sleep(1000);
+        executor.terminateTestImmediately();
+        queueMaster.terminateService();
     }
 
     public List<TestRunner> getTests() {
