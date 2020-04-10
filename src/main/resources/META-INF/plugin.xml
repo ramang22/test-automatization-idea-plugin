@@ -17,6 +17,11 @@
         <!-- Add your extensions here -->
         <postStartupActivity implementation="pluginCommunicationHandler.StartUpActivity"/>
     </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="highlighter.CustomLineMarker"/>
+    </extensions>
+
     <actions>
         <!-- Add your actions here -->
         <group id="mainScreen" text="Tester Plugin" description="Main window of plugin" >
@@ -25,5 +30,7 @@
             <action class="pluginCommunicationHandler.SelectTestsFolderButton" id="selectTestFolder" text="Select tests folder"/>
             <action class="pluginCommunicationHandler.PluginSettings" id="pluginSettings" text="Settings"/>
         </group>
+
+
     </actions>
 </idea-plugin>

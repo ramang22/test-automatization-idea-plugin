@@ -5,6 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class PsiHandler {
         return methods;
     }
 
-    public boolean isTest(PsiMethod psiMethod) {
+    public boolean isTest(@NotNull PsiMethod psiMethod) {
         PsiModifierList psiModifierList = psiMethod.getModifierList();
         PsiAnnotation[] annotations = psiModifierList.getAnnotations();
 

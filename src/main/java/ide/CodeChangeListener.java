@@ -1,5 +1,7 @@
 package ide;
 
+import com.intellij.codeInsight.daemon.LineMarkerInfo;
+import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -19,9 +21,11 @@ import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pluginResources.HighlightSingleton;
 import pluginResources.TestSingleton;
 
 import javax.swing.*;
+import javax.xml.bind.SchemaOutputResolver;
 import java.awt.*;
 import java.util.Optional;
 
@@ -55,41 +59,43 @@ public class CodeChangeListener implements PsiTreeChangeListener {
 
     @Override
     public void beforeChildAddition(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+     //   handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void beforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+      //  handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void beforeChildReplacement(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+      //  handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void beforeChildMovement(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+      //  handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void beforeChildrenChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+      //  handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void beforePropertyChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+     //   handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void propertyChanged(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+      //  handleCodeChange(psiTreeChangeEvent);
     }
 
     public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
+
+        // TODO Ignore changes in tests
         PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
                 (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
         if (parentMethod == null) {
@@ -106,7 +112,7 @@ public class CodeChangeListener implements PsiTreeChangeListener {
             }
         } else {
             TestSingleton.getInstance().getEvents().add(psiTreeChangeEvent);
-
+            //HighlightSingleton.getInstance().getMethodsHeaders().add(parentMethod);
         }
     }
 

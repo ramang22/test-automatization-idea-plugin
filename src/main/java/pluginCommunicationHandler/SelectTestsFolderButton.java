@@ -8,6 +8,8 @@ import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 import testController.MainTestController;
 
+import java.io.IOException;
+
 public class SelectTestsFolderButton extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -24,7 +26,7 @@ public class SelectTestsFolderButton extends AnAction {
             MainTestController main = new MainTestController();
             try {
               main.runAllTests();
-            } catch (InterruptedException | NoSuchMethodException ex) {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
             Messages.showMessageDialog(e.getProject(),virtualFile.getPath(),"Path",Messages.getInformationIcon());

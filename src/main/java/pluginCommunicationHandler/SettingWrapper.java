@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class SettingWrapper extends DialogWrapper {
 
@@ -51,7 +52,7 @@ public class SettingWrapper extends DialogWrapper {
                     MainTestController main = new MainTestController();
                     try {
                         main.runAllTests();
-                    } catch (InterruptedException | NoSuchMethodException ex) {
+                    } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
                     Messages.showMessageDialog(project,virtualFile.getPath(),"Path",Messages.getInformationIcon());

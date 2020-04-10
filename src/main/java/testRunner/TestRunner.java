@@ -6,9 +6,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
-import test.UnitTests;
 
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;

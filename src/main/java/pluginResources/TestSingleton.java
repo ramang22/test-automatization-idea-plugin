@@ -12,10 +12,17 @@ public class TestSingleton {
 
     private HashMap<String, List<String>> testMap;
     private List<PsiTreeChangeEvent> events;
+    private HashMap<String, List<PsiTreeChangeEvent>> eventsForMethod;
+    private HashMap<String, String> testClasses;
 
+    // key = test method name, value = lists of changes
+    private HashMap<String, List<PsiTreeChangeEvent>> testMethod_event;
     private TestSingleton() {
         testMap = new HashMap<>();
         events = new ArrayList<>();
+        eventsForMethod = new HashMap<>();
+        testClasses = new HashMap<>();
+        testMethod_event = new HashMap<>();
     }
 
     public static TestSingleton getInstance() {
@@ -41,5 +48,28 @@ public class TestSingleton {
         this.events = events;
     }
 
+    public HashMap<String, List<PsiTreeChangeEvent>> getEventsForMethod() {
+        return eventsForMethod;
+    }
+
+    public void setEventsForMethod(HashMap<String, List<PsiTreeChangeEvent>> eventsForMethod) {
+        this.eventsForMethod = eventsForMethod;
+    }
+
+    public HashMap<String, String> getTestClasses() {
+        return testClasses;
+    }
+
+    public void setTestClasses(HashMap<String, String> testClasses) {
+        this.testClasses = testClasses;
+    }
+
+    public HashMap<String, List<PsiTreeChangeEvent>> getTestMethod_event() {
+        return testMethod_event;
+    }
+
+    public void setTestMethod_event(HashMap<String, List<PsiTreeChangeEvent>> testMethod_event) {
+        this.testMethod_event = testMethod_event;
+    }
 }
 
