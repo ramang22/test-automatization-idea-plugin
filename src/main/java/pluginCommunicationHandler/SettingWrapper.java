@@ -10,9 +10,12 @@ import com.intellij.uiDesigner.core.AbstractLayout;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nullable;
+import org.xml.sax.SAXException;
 import testController.MainTestController;
 
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,7 +55,7 @@ public class SettingWrapper extends DialogWrapper {
                     MainTestController main = new MainTestController();
                     try {
                         main.runAllTests();
-                    } catch (InterruptedException ex) {
+                    } catch (InterruptedException | IOException | ParserConfigurationException | SAXException | TransformerException ex) {
                         ex.printStackTrace();
                     }
                     Messages.showMessageDialog(project,virtualFile.getPath(),"Path",Messages.getInformationIcon());

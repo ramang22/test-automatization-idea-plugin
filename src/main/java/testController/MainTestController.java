@@ -2,16 +2,31 @@ package testController;
 
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.*;
+import database.DbController;
+import database.TestDb;
+import org.xml.sax.SAXException;
 import pluginResources.TestSingleton;
 import mavenTestRunner.testRunner;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.*;
+
 
 public class MainTestController {
 
 
-    public void runAllTests() throws InterruptedException {
+    public void runAllTests() throws InterruptedException, IOException, ParserConfigurationException, SAXException, TransformerException {
 
+        DbController.insert("Test_add", 1);
+        for (TestDb test : Objects.requireNonNull(DbController.getTestByTestName("Test_add"))){
+            System.out.println("Updating tests");
+            DbController.update(test.getId(), test.getName(), 0 );
+            test.printSelf();
+        }
+        //testRunner.runClover();
+        //clover mvn clean test clover:setup clover:aggregate clover:clover
 
         // TODO FIX clean all previous highlights
         //CodeHighlighter.removeOldHighlights();
@@ -20,6 +35,7 @@ public class MainTestController {
         List<PsiTreeChangeEvent> events = TestSingleton.getInstance().getEvents();
         HashSet<String> testNames = new HashSet<>();
         for (PsiTreeChangeEvent event : events) {
+            // TODO : make filter for event changes, filter out useless changes
             PsiElement psiTreeElement = event.getParent();
             PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ? (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
             if (parentMethod != null) {
@@ -45,7 +61,12 @@ public class MainTestController {
             }
         }
 
-        // TODO : prioritization
+        /*
+         *       TODO Test Prioritization
+         *          1. for every test check last result in db
+         *          2. get failed test for priority, then passed tests
+         *          3. for failed tests by test time (lower first), for passed tests do same
+         */
 
         // run all tests
         for (String test_method : testNames) {

@@ -18,7 +18,6 @@ public class CustomLineMarker extends RelatedItemLineMarkerProvider {
                 for (PsiElement elem : HighlightSingleton.getInstance().getMethodsHeaders()){
                     NavigationGutterIconBuilder< PsiElement > builder =
                             NavigationGutterIconBuilder.create(CustomIcons.FAIL_GUTTER)
-                                    //TODO ADD PSI ELEMENT
                                     .setTargets( elem )
                                     .setTooltipText( "Navigate to Simple language property" );
                     result.add( builder.createLineMarkerInfo( element ) );
