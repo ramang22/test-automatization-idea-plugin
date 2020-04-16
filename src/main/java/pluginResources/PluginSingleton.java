@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import ide.Tester;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class PluginSingleton {
@@ -13,6 +14,7 @@ public class PluginSingleton {
     private String pomPath;
     private String clover_db_path;
     private String clover_html_report_path;
+    private HashSet<String> package_file_paths;
     Tester tester;
 
 
@@ -23,6 +25,7 @@ public class PluginSingleton {
         this.pomPath = "";
         this.clover_db_path = "";
         this.clover_html_report_path = "";
+        this.package_file_paths = new HashSet<>();
     }
 
     public static PluginSingleton getInstance()
@@ -82,5 +85,13 @@ public class PluginSingleton {
 
     public void setClover_html_report_path(String clover_html_report_path) {
         this.clover_html_report_path = clover_html_report_path;
+    }
+
+    public HashSet<String> getPackage_file_paths() {
+        return package_file_paths;
+    }
+
+    public void setPackage_file_paths(HashSet<String> package_file_paths) {
+        this.package_file_paths = package_file_paths;
     }
 }

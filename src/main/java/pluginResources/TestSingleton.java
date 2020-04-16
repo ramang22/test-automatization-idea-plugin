@@ -17,6 +17,8 @@ public class TestSingleton {
 
     // key = test method name, value = lists of changes
     private HashMap<String, List<PsiTreeChangeEvent>> testMethod_event;
+
+
     private TestSingleton() {
         testMap = new HashMap<>();
         events = new ArrayList<>();

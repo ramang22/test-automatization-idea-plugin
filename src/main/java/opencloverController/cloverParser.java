@@ -1,21 +1,24 @@
 package opencloverController;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.*;
+import pluginResources.PluginSingleton;
+import pluginResources.TestSingleton;
 
 public class cloverParser {
 
     private String readWholeFile(String filepath) {
         StringBuilder contentBuilder = new StringBuilder();
-        filepath = "/Users/ramang/Documents/Developer/line_coverage_parser_for_openclover/calc.js";
         try (Stream<String> stream = Files.lines(Paths.get(filepath), StandardCharsets.UTF_8)) {
             stream.forEach(s -> contentBuilder.append(s).append("\n"));
         } catch (IOException e) {
@@ -87,22 +90,31 @@ public class cloverParser {
     }
 
     private void getTestCoverageInClass(String className) throws JSONException {
-        // load file , TODO PATH
+        // load file
         String file_content_string = this.readWholeFile(className);
         // get 1. property clover.testTargets
         HashMap<Integer, String> test_id_test_name = this.getTestTargets(file_content_string);
         // get 2. property clover.srcFileLines
         HashMap<String, List<Integer>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
-        // TODO write coverage into singleton
+        // TODO save into singleton, how? 
     }
 
 
     public static void getTestCoverageWithinClasses() throws JSONException {
-        // TODO get all classes used in project
-        // for each class harvest coverage
-        // save into singleton
         cloverParser parser = new cloverParser();
-        parser.getTestCoverageInClass("calc");
+
+        // file paths
+        HashSet<String> coveredClasses = PluginSingleton.getInstance().getPackage_file_paths();
+        // html report path
+        String htmlReportPath = PluginSingleton.getInstance().getClover_html_report_path();
+
+        for (String path : coveredClasses) {
+            //check if file exists in clover report
+            File tempFile = new File(htmlReportPath + path);
+            if (tempFile.exists()) {
+                parser.getTestCoverageInClass(htmlReportPath + path);
+            }
+        }
     }
 
 }

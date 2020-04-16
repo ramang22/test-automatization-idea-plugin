@@ -7,7 +7,9 @@ import ide.CodeChangeListener;
 import ide.PsiHandler;
 import opencloverController.cloverApiRunner;
 import mavenRunner.cloverRunner;
+import opencloverController.cloverParser;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 import test.Test;
@@ -54,6 +56,7 @@ public class StartUpActivity implements StartupActivity {
                     TestSingleton.getInstance().getTestMap().get(name).add(test.getName());
                 }
             }
+            //get all file and packces for run /main/Calculator.js
             for (PsiMethod m : test.getContainedMethods()){
                 String filename = ((PsiJavaFile)m.getContainingFile()).getName().split("\\.")[0];
                 String package_name = ((PsiJavaFile)m.getContainingFile()).getPackageName();
@@ -61,17 +64,23 @@ public class StartUpActivity implements StartupActivity {
             }
         }
 
-
-        // run mvn clover
-        try {
-            cloverRunner.runClover();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        // openclover api html report
-        cloverApiRunner.runHtmlReporter();
+        PluginSingleton.getInstance().setPackage_file_paths(packageFileString);
+//        // run mvn clover
+//        try {
+//            cloverRunner.runClover();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        // openclover api html report
+//        cloverApiRunner.runHtmlReporter();
 
         // run init test coverage
+        try {
+            cloverParser.getTestCoverageWithinClasses();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
