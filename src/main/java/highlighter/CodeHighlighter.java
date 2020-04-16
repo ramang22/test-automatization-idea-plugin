@@ -96,7 +96,12 @@ public class CodeHighlighter {
 
         saveHighlight(document, lineNum, false);
 
-        editor.getMarkupModel().addLineHighlighter(lineNum, HighlighterLayer.CARET_ROW, textattributes);
+        //editor.getMarkupModel().addLineHighlighter(lineNum, 66, textattributes);
+        MarkupModel markupModel = getMarkupModel(document);
+        RangeHighlighter highlighter;
+        TextAttributes textAttributes = getTextAttributes();
+        highlighter = markupModel.addLineHighlighter(lineNum, 66, textAttributes);
+
     }
 
     private static void highLightLineWithGutter(@NotNull PsiElement psiTreeChangeEvent) {
@@ -116,26 +121,30 @@ public class CodeHighlighter {
         TextRange lineTextRange = DocumentUtil.getLineTextRange(document, lineNumber);
         for (RangeHighlighter highlighter : markupModel.getAllHighlighters()) {
 
-            //if (intersectsAndMatchLayer(highlighter, lineTextRange)) {
-                System.out.println("tu som");
+          //  if (intersectsAndMatchLayer(highlighter, lineTextRange)) {
+
                 markupModel.removeHighlighter(highlighter);
             //}
         }
     }
 
     public static void removeOldHighlights(){
+
         if (!HighlightSingleton.getInstance().getHighlighted_lanes().isEmpty()) {
             for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
-                System.out.println("Removing "+h.getLine_num());
-                removeLineHighlight(h.getDocument(), h.getLine_num());
+                int lim_num = h.getLine_num();
+                System.out.println("Removing without gutter "+lim_num);
+                removeLineHighlight(h.getDocument(), lim_num);
             }
         }
         if (!HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().isEmpty()) {
-            for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
-                System.out.println("Removing "+h.getLine_num());
+            for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter()) {
+                System.out.println("Removing with gutter "+h.getLine_num());
                 removeLineHighlight(h.getDocument(), h.getLine_num());
             }
         }
+        HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().clear();
+        HighlightSingleton.getInstance().getHighlighted_lanes().clear();
     }
     private static boolean intersectsAndMatchLayer(@NotNull RangeHighlighter highlighter, @NotNull TextRange lineTextRange) {
         return !(highlighter.getEndOffset() < lineTextRange.getStartOffset()

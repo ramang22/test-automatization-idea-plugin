@@ -5,9 +5,11 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.util.PsiTreeUtil;
 
+import highlighter.CodeHighlighter;
 import opencloverController.cloverParser;
 import org.json.JSONException;
 import org.xml.sax.SAXException;
+import pluginResources.HighlightSingleton;
 import pluginResources.TestSingleton;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,7 +47,7 @@ public class MainTestController {
 
 
         // TODO FIX clean all previous highlights
-        //CodeHighlighter.removeOldHighlights();
+        CodeHighlighter.removeOldHighlights();
 
 
         List<PsiTreeChangeEvent> events = TestSingleton.getInstance().getEvents();
@@ -64,14 +66,16 @@ public class MainTestController {
                     new_event_list.add(event);
                     TestSingleton.getInstance().getEventsForMethod().put(methodName, new_event_list);
                 }
-                testNames.addAll(TestSingleton.getInstance().getTestMap().get(methodName));
-                for (String test_name : TestSingleton.getInstance().getTestMap().get(methodName)) {
-                    if (TestSingleton.getInstance().getTestMethod_event().containsKey(test_name)) {
-                        TestSingleton.getInstance().getTestMethod_event().get(test_name).add(event);
-                    } else {
-                        List<PsiTreeChangeEvent> new_list = new ArrayList<>();
-                        new_list.add(event);
-                        TestSingleton.getInstance().getTestMethod_event().put(test_name, new_list);
+                if (TestSingleton.getInstance().getTestMap().containsKey(methodName)) {
+                    testNames.addAll(TestSingleton.getInstance().getTestMap().get(methodName));
+                    for (String test_name : TestSingleton.getInstance().getTestMap().get(methodName)) {
+                        if (TestSingleton.getInstance().getTestMethod_event().containsKey(test_name)) {
+                            TestSingleton.getInstance().getTestMethod_event().get(test_name).add(event);
+                        } else {
+                            List<PsiTreeChangeEvent> new_list = new ArrayList<>();
+                            new_list.add(event);
+                            TestSingleton.getInstance().getTestMethod_event().put(test_name, new_list);
+                        }
                     }
                 }
             }
@@ -93,6 +97,9 @@ public class MainTestController {
         }
 
         // TODO clean test singleton, delete changes from last run
+        TestSingleton.getInstance().getEvents().clear();
+        TestSingleton.getInstance().getTestMethod_event().clear();
+        TestSingleton.getInstance().getEventsForMethod().clear();
 
     }
 }
