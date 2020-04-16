@@ -96,7 +96,7 @@ public class cloverParser {
         HashMap<Integer, String> test_id_test_name = this.getTestTargets(file_content_string);
         // get 2. property clover.srcFileLines
         HashMap<String, List<Integer>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
-        // TODO save into singleton, how? 
+        // TODO save into singleton, how?
     }
 
 

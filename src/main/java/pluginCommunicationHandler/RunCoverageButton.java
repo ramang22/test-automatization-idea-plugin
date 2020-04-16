@@ -12,15 +12,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-public class RunTestButton extends AnAction {
-    @Override
+public class RunCoverageButton extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Messages.showMessageDialog(e.getProject(), "Running all necessary tests, because you dont need to run them all ;). ", "Running Required Tests",Messages.getQuestionIcon());
+        Messages.showMessageDialog(e.getProject(), "Re-running whole coverage with openclover and maven", "Coverage run",Messages.getQuestionIcon());
         MainTestController main = new MainTestController();
-        try {
-            main.runAllTests();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+        main.runCoverage();
     }
 }

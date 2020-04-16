@@ -6,6 +6,14 @@ import java.util.List;
 
 public class DbController {
 
+
+    //        DbController.insert("Test_add", 1);
+//        for (TestDb test : Objects.requireNonNull(DbController.getTestByTestName("Test_add"))){
+//            System.out.println("Updating tests");
+//            DbController.update(test.getId(), test.getName(), 0 );
+//            test.printSelf();
+//        }
+
     private Connection connect() {
         Connection conn = null;
         try {

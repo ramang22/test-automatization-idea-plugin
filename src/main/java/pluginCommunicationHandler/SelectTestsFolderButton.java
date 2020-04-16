@@ -32,14 +32,6 @@ public class SelectTestsFolderButton extends AnAction {
               main.runAllTests();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } catch (ParserConfigurationException ex) {
-                ex.printStackTrace();
-            } catch (SAXException ex) {
-                ex.printStackTrace();
-            } catch (TransformerException | JSONException ex) {
-                ex.printStackTrace();
             }
             Messages.showMessageDialog(e.getProject(),virtualFile.getPath(),"Path",Messages.getInformationIcon());
         });

@@ -56,7 +56,7 @@ public class SettingWrapper extends DialogWrapper {
                     MainTestController main = new MainTestController();
                     try {
                         main.runAllTests();
-                    } catch (InterruptedException | IOException | ParserConfigurationException | SAXException | TransformerException | JSONException ex) {
+                    } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
                     Messages.showMessageDialog(project,virtualFile.getPath(),"Path",Messages.getInformationIcon());
