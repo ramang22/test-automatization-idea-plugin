@@ -3,22 +3,20 @@ package pluginCommunicationHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
 import ide.CodeChangeListener;
 import ide.PsiHandler;
+import opencloverController.cloverApiRunner;
+import mavenRunner.cloverRunner;
 import org.jetbrains.annotations.NotNull;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 import test.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class StartUpActivity implements StartupActivity {
     public StartUpActivity() throws IOException {
@@ -32,6 +30,7 @@ public class StartUpActivity implements StartupActivity {
 
         //set project variables
         PluginSingleton.getInstance().setProject(project);
+        PluginSingleton.getInstance().setProjectRootFolderPath("/Users/ramang/Documents/Developer/tests-project-for-plugin/");
         //test all methods in tests
         PsiHandler psiHandler = new PsiHandler();
         List<PsiMethod> methods = psiHandler.getAllTests(project);
@@ -41,9 +40,11 @@ public class StartUpActivity implements StartupActivity {
             tests.add(new Test(test, Objects.requireNonNull(test.getContainingClass()), a));
         }
 
+        HashSet<String> packageFileString = new HashSet<>();
+
         //create global hash map in singleton
         for (Test test : tests) {
-            TestSingleton.getInstance().getTestClasses().put(test.getName(),test.getTest_class_name());
+            TestSingleton.getInstance().getTestClasses().put(test.getName(), test.getTest_class_name());
             for (String name : test.getContainedMethods_names()) {
                 if (TestSingleton.getInstance().getTestMap().get(name) == null) {
                     List<String> testNames = new ArrayList<>();
@@ -53,12 +54,26 @@ public class StartUpActivity implements StartupActivity {
                     TestSingleton.getInstance().getTestMap().get(name).add(test.getName());
                 }
             }
+            for (PsiMethod m : test.getContainedMethods()){
+                String filename = ((PsiJavaFile)m.getContainingFile()).getName().split("\\.")[0];
+                String package_name = ((PsiJavaFile)m.getContainingFile()).getPackageName();
+                packageFileString.add(package_name+"/"+filename+".js");
+            }
         }
 
-        // get all classes from
+
+        // run mvn clover
+        try {
+            cloverRunner.runClover();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // openclover api html report
+        cloverApiRunner.runHtmlReporter();
+
+        // run init test coverage
 
     }
-
 
 
 }

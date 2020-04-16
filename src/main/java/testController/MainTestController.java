@@ -1,20 +1,12 @@
 package testController;
 
-import com.atlassian.clover.reporters.html.HtmlReporter;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.*;
-import database.DbController;
-import database.TestDb;
 import opencloverController.cloverParser;
 import org.json.JSONException;
 import org.xml.sax.SAXException;
-import pluginResources.TestSingleton;
-import mavenTestRunner.testRunner;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
-import java.util.*;
 
 
 public class MainTestController {
@@ -23,8 +15,7 @@ public class MainTestController {
     public void runAllTests() throws InterruptedException, IOException, ParserConfigurationException, SAXException, TransformerException, JSONException {
 
 
-//        String [] cliArgs2 = { "-i", "/Users/ramang/Documents/Developer/tests-project-for-plugin/target/clover/clover.db", "-o", "/Users/ramang/Documents/Developer/tests-project-for-plugin/src/main/java/main/" };
-//        HtmlReporter.runReport(cliArgs2);
+
         cloverParser.getTestCoverageWithinClasses();
 
 //        DbController.insert("Test_add", 1);

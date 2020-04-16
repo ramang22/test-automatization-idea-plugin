@@ -9,12 +9,20 @@ import java.util.List;
 public class PluginSingleton {
     private static PluginSingleton INSTANCE = null;
     private Project project;
+    private String projectRootFolderPath;
+    private String pomPath;
+    private String clover_db_path;
+    private String clover_html_report_path;
     Tester tester;
 
 
     private PluginSingleton()
     {
-        tester = new Tester();
+        this.tester = new Tester();
+        this.projectRootFolderPath  = "";
+        this.pomPath = "";
+        this.clover_db_path = "";
+        this.clover_html_report_path = "";
     }
 
     public static PluginSingleton getInstance()
@@ -39,5 +47,40 @@ public class PluginSingleton {
 
     public void setTester(Tester tester) {
         this.tester = tester;
+    }
+
+    public String getProjectRootFolderPath() {
+        return projectRootFolderPath;
+    }
+
+    public void setProjectRootFolderPath(String projectRootFolderPath) {
+        this.setPomPath(projectRootFolderPath+"pom.xml");
+        this.setClover_db_path(projectRootFolderPath+"target/clover/clover.db");
+        this.setClover_html_report_path(projectRootFolderPath+"TestPlugin/openclover/");
+        this.projectRootFolderPath = projectRootFolderPath;
+    }
+
+    public String getPomPath() {
+        return pomPath;
+    }
+
+    public void setPomPath(String pomPath) {
+        this.pomPath = pomPath;
+    }
+
+    public String getClover_db_path() {
+        return clover_db_path;
+    }
+
+    public void setClover_db_path(String clover_db_path) {
+        this.clover_db_path = clover_db_path;
+    }
+
+    public String getClover_html_report_path() {
+        return clover_html_report_path;
+    }
+
+    public void setClover_html_report_path(String clover_html_report_path) {
+        this.clover_html_report_path = clover_html_report_path;
     }
 }
