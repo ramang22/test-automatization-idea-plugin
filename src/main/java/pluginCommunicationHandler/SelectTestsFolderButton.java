@@ -6,6 +6,7 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.xml.sax.SAXException;
 import testController.MainTestController;
 
@@ -37,7 +38,7 @@ public class SelectTestsFolderButton extends AnAction {
                 ex.printStackTrace();
             } catch (SAXException ex) {
                 ex.printStackTrace();
-            } catch (TransformerException ex) {
+            } catch (TransformerException | JSONException ex) {
                 ex.printStackTrace();
             }
             Messages.showMessageDialog(e.getProject(),virtualFile.getPath(),"Path",Messages.getInformationIcon());

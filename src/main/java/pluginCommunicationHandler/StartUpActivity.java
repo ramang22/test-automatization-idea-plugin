@@ -55,6 +55,8 @@ public class StartUpActivity implements StartupActivity {
             }
         }
 
+        // get all classes from
+
     }
 
 

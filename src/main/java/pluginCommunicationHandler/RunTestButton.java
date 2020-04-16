@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.xml.sax.SAXException;
 import testController.MainTestController;
 
@@ -27,6 +28,8 @@ public class RunTestButton extends AnAction {
         } catch (SAXException ex) {
             ex.printStackTrace();
         } catch (TransformerException ex) {
+            ex.printStackTrace();
+        } catch (JSONException ex) {
             ex.printStackTrace();
         }
     }
