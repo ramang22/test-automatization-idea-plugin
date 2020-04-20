@@ -45,6 +45,7 @@ public class MainTestController {
 
     public void runAllTests() throws InterruptedException {
 
+        // https://www.programcreek.com/java-api-examples/?class=com.intellij.psi.PsiFile&method=findElementAt
 
         // TODO FIX clean all previous highlights
         CodeHighlighter.removeOldHighlights();

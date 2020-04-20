@@ -1,16 +1,17 @@
 package ide;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.vcs.log.Hash;
 import org.jetbrains.annotations.NotNull;
+import pluginResources.TestSingleton;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class PsiHandler {
 
@@ -80,13 +81,43 @@ public class PsiHandler {
             return methodCalls;
 
         for (PsiElement child : methodChild.getChildren()) {
-            methodCalls.addAll(traverseBodyToFindAllMethodUsages(child));
+        methodCalls.addAll(traverseBodyToFindAllMethodUsages(child));
 
-            if (child instanceof PsiMethodCallExpressionImpl) {
-                PsiMethod method = ((PsiMethodCallExpressionImpl) child).resolveMethod();
-                methodCalls.add(method);
+        if (child instanceof PsiMethodCallExpressionImpl) {
+            PsiMethod method = ((PsiMethodCallExpressionImpl) child).resolveMethod();
+            methodCalls.add(method);
+        }
+    }
+        return methodCalls;
+}
+
+    public void mapLinesToTests(PsiClass c, HashMap<Integer, List<String>> integerListHashMap) {
+        PsiMethod[] methods = c.getAllMethods();
+        HashSet<PsiElement> elementsToTests = new HashSet<>();
+        for (PsiMethod method : methods){
+            for (PsiElement elem : method.getChildren()){
+                this.mapElementToTest(elem,integerListHashMap);
             }
         }
-        return methodCalls;
+    }
+
+    public void mapElementToTest(PsiElement elem,HashMap<Integer, List<String>> map) {
+        if (elem == null) {
+            return;
+        }
+        for (PsiElement child : elem.getChildren()) {
+            this.mapElementToTest(child,map);
+            Document document = FileDocumentManager.getInstance().getDocument(elem.getContainingFile().getVirtualFile());
+            int lineNum = document.getLineNumber(elem.getTextOffset());
+            if (map.containsKey(lineNum+1)){
+                System.out.println(" ,line number : "+lineNum+" , ["+elem.getText()+"] , tests: "+map.get(lineNum+1));
+                if (TestSingleton.getInstance().getPsiElementToTests().containsKey(elem)){
+                    TestSingleton.getInstance().getPsiElementToTests().get(elem).addAll(map.get(lineNum+1));
+                }else {
+                    List<String> newList = new ArrayList<>(map.get(lineNum + 1));
+                    TestSingleton.getInstance().getPsiElementToTests().put(elem,newList);
+                }
+            }
+        }
     }
 }

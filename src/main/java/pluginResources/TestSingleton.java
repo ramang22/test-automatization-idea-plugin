@@ -1,6 +1,7 @@
 package pluginResources;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiTreeChangeEvent;
 
 import java.util.ArrayList;
@@ -19,12 +20,19 @@ public class TestSingleton {
     private HashMap<String, List<PsiTreeChangeEvent>> testMethod_event;
 
 
+    private HashMap<String, HashMap<Integer, List<String>>> coverageByClass;
+
+    // line PsiElement : Array of test names strings
+    private HashMap<PsiElement, List<String>> psiElementToTests;
+
     private TestSingleton() {
         testMap = new HashMap<>();
         events = new ArrayList<>();
         eventsForMethod = new HashMap<>();
         testClasses = new HashMap<>();
         testMethod_event = new HashMap<>();
+        coverageByClass = new HashMap<>();
+        psiElementToTests = new HashMap<>();
     }
 
     public static TestSingleton getInstance() {
@@ -72,6 +80,22 @@ public class TestSingleton {
 
     public void setTestMethod_event(HashMap<String, List<PsiTreeChangeEvent>> testMethod_event) {
         this.testMethod_event = testMethod_event;
+    }
+
+    public HashMap<String, HashMap<Integer, List<String>>> getCoverageByClass() {
+        return coverageByClass;
+    }
+
+    public void setCoverageByClass(HashMap<String, HashMap<Integer, List<String>>> coverageByClass) {
+        this.coverageByClass = coverageByClass;
+    }
+
+    public HashMap<PsiElement, List<String>> getPsiElementToTests() {
+        return psiElementToTests;
+    }
+
+    public void setPsiElementToTests(HashMap<PsiElement, List<String>> psiElementToTests) {
+        this.psiElementToTests = psiElementToTests;
     }
 }
 

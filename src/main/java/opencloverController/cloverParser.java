@@ -31,15 +31,18 @@ public class cloverParser {
         HashMap<Integer, String> id_name_map = new HashMap<>();
         String json_string = this.getSubstringByTwoStrings("clover.testTargets = ", "// JSON: { lines ", file_content);
         JSONObject json = new JSONObject(json_string);
-        for (int i = 0; i < json.names().length(); i++) {
-            //get test id from "test_1"
-            String test_id = json.names().getString(i).split("_")[1];
-            //get test name form json field name
-            JSONObject test = (JSONObject) json.get(json.names().getString(i));
-            String test_name = test.get("name").toString();
-            id_name_map.put(Integer.parseInt(test_id), test_name);
+        if (json.length() > 0) {
+            for (int i = 0; i < json.names().length(); i++) {
+                //get test id from "test_1"
+                String test_id = json.names().getString(i).split("_")[1];
+                //get test name form json field name
+                JSONObject test = (JSONObject) json.get(json.names().getString(i));
+                String test_name = test.get("name").toString();
+                id_name_map.put(Integer.parseInt(test_id), test_name);
+            }
+            return id_name_map;
         }
-        return id_name_map;
+        return null;
     }
 
     private String getSubstringByTwoStrings(String start, String end, String searchString) {
@@ -49,20 +52,20 @@ public class cloverParser {
         return searchString.substring(startIndexOfJSON + lenTestTargets, endIndexOfJSON);
     }
 
-    private void checkIfCouldBeAdded(HashMap<String, List<Integer>> test_lines, HashMap<Integer, String> test_id_test_name, String test_id, Integer line_num) {
+    private void checkIfCouldBeAdded(HashMap<Integer, List<String>> test_lines, HashMap<Integer, String> test_id_test_name, String test_id, Integer line_num) {
         if (!test_id.equals("")) {
-            if (test_lines.containsKey(test_id_test_name.get(Integer.parseInt(test_id)))) {
-                test_lines.get(test_id_test_name.get(Integer.parseInt(test_id))).add(line_num);
+            if (test_lines.containsKey(line_num)) {
+                test_lines.get(line_num).add(test_id_test_name.get(Integer.parseInt(test_id)));
             } else {
-                List<Integer> newList = new ArrayList<>();
-                newList.add(line_num);
-                test_lines.put(test_id_test_name.get(Integer.parseInt(test_id)), newList);
+                List<String> newList = new ArrayList<>();
+                newList.add(test_id_test_name.get(Integer.parseInt(test_id)));
+                test_lines.put(line_num,newList);
             }
         }
     }
 
-    private HashMap<String, List<Integer>> getSrcFileLines(HashMap<Integer, String> test_id_test_name, String file_content) {
-        HashMap<String, List<Integer>> test_lines = new HashMap<>();
+    private HashMap<Integer, List<String>> getSrcFileLines(HashMap<Integer, String> test_id_test_name, String file_content) {
+        HashMap<Integer, List<String>> test_lines = new HashMap<>();
 
         int startIndexOfJSON = file_content.indexOf("clover.srcFileLines = ");
         int lenSrcFileLines = "clover.srcFileLines = ".length();
@@ -89,14 +92,19 @@ public class cloverParser {
         return test_lines;
     }
 
-    private void getTestCoverageInClass(String className) throws JSONException {
+    private void getTestCoverageInClass(String classPath, String className) throws JSONException {
         // load file
-        String file_content_string = this.readWholeFile(className);
+        String file_content_string = this.readWholeFile(classPath);
         // get 1. property clover.testTargets
         HashMap<Integer, String> test_id_test_name = this.getTestTargets(file_content_string);
         // get 2. property clover.srcFileLines
-        HashMap<String, List<Integer>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
-        // TODO save into singleton, how?
+        if (test_id_test_name != null){
+            HashMap<Integer, List<String>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
+            TestSingleton.getInstance().getCoverageByClass().put(className,testCoverageByLine);
+        }else{
+            System.out.println("V "+className+" som nenasiel ziadny coverage.");
+        }
+
     }
 
 
@@ -112,7 +120,9 @@ public class cloverParser {
             //check if file exists in clover report
             File tempFile = new File(htmlReportPath + path);
             if (tempFile.exists()) {
-                parser.getTestCoverageInClass(htmlReportPath + path);
+                System.out.println(path);
+                parser.getTestCoverageInClass(htmlReportPath + path,path.split("/")[1].split("\\.")[0]);
+
             }
         }
     }
