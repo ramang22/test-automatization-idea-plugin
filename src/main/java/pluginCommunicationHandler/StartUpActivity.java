@@ -65,21 +65,21 @@ public class StartUpActivity implements StartupActivity {
 //        }
 
 //        PluginSingleton.getInstance().setPackage_file_paths(packageFileString);
-//        // run mvn clover
-//        try {
-//            cloverRunner.runClover();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        // openclover api html report
-//        cloverApiRunner.runHtmlReporter();
+        // run mvn clover
+        try {
+            cloverRunner.runClover();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // openclover api html report
+        cloverApiRunner.runHtmlReporter();
 
-        // run init test coverage
-//        try {
-//            cloverParser.getTestCoverageWithinClasses();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+//         run init test coverage
+        try {
+            cloverParser.getTestCoverageWithinClasses();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         // get all classes in tests
         List<PsiClass> allClassesForProject = psiHandler.getAllClasses(project);

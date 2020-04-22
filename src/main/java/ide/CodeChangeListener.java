@@ -34,27 +34,31 @@ import java.util.Optional;
 public class CodeChangeListener implements PsiTreeChangeListener {
     @Override
     public void childAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+
+        //handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void childRemoved(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+
+        //handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void childReplaced(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+
+        //handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void childrenChanged(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+       // handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
     public void childMoved(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        handleCodeChange(psiTreeChangeEvent);
+
+        //handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class CodeChangeListener implements PsiTreeChangeListener {
 
     @Override
     public void beforeChildReplacement(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-      //  handleCodeChange(psiTreeChangeEvent);
+        handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
@@ -92,9 +96,39 @@ public class CodeChangeListener implements PsiTreeChangeListener {
       //  handleCodeChange(psiTreeChangeEvent);
     }
 
+    public void printParents(@NotNull PsiTreeChangeEvent psiTreeChangeEvent){
+
+        PsiElement oldChild = psiTreeChangeEvent.getOldChild();
+        PsiElement oldParent = psiTreeChangeEvent.getOldParent();
+        PsiElement newChild = psiTreeChangeEvent.getNewChild();
+        PsiElement newParent = psiTreeChangeEvent.getNewParent();
+        if (oldChild != null) {
+            System.out.println("Old child Element " + oldChild.getText() + " not in hash map : " + psiTreeChangeEvent.getOldChild().hashCode());
+           // System.out.println("Old child Element " + oldChild.getParent().getText() + " not in hash map : " + oldChild.getParent().hashCode());
+        }
+        if (oldParent != null ) {
+            System.out.println("Old parent Element " + oldParent.getText() + " not in hash map : " + psiTreeChangeEvent.getOldParent().hashCode());
+        }
+        if (newChild != null ) {
+            System.out.println("New child parent Element " + newChild.getText() + " not in hash map : " + psiTreeChangeEvent.getNewChild().hashCode());
+          //  System.out.println("New child parent Element " + newChild.getParent().getText() + " not in hash map : " + newChild.getParent().hashCode());
+        }
+        if (newParent != null ) {
+            System.out.println("New parent Element " + newParent.getText() + " not in hash map : " + psiTreeChangeEvent.getNewParent().hashCode());
+        }
+        if (psiTreeChangeEvent.getElement() != null){
+            System.out.println("Element "+psiTreeChangeEvent.getElement().getText()+" not in hash map : " + psiTreeChangeEvent.getElement().hashCode());
+        }
+        if (psiTreeChangeEvent.getParent() != null){
+            System.out.println("Element parent "+psiTreeChangeEvent.getParent().getText()+" not in hash map : " + psiTreeChangeEvent.getParent().hashCode());
+        }
+
+    }
+
     public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
-
+        this.printParents(psiTreeChangeEvent);
+        // TODO MAKE HANDLER FOR EVERY BEFORE AND ADD
         // TODO Ignore changes in tests
         PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
                 (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);

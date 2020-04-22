@@ -110,12 +110,14 @@ public class PsiHandler {
             Document document = FileDocumentManager.getInstance().getDocument(elem.getContainingFile().getVirtualFile());
             int lineNum = document.getLineNumber(elem.getTextOffset());
             if (map.containsKey(lineNum + 1)) {
+                // TODO ADD PARENT ELEMENT
                 if (TestSingleton.getInstance().getPsiElementToTests().containsKey(elem)) {
                     TestSingleton.getInstance().getPsiElementToTests().get(elem).addAll(map.get(lineNum + 1));
                 } else {
                     List<String> newList = new ArrayList<>(map.get(lineNum + 1));
                     TestSingleton.getInstance().getPsiElementToTests().put(elem, newList);
                 }
+                System.out.println("Element : "+elem.getText()+" ,Hash code : "+elem.hashCode());
                 for (String testName : map.get(lineNum + 1)) {
                     if (TestSingleton.getInstance().getTestToPsiElements().containsKey(testName)) {
                         TestSingleton.getInstance().getTestToPsiElements().get(testName).add(elem);
