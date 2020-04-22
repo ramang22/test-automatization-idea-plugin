@@ -21,10 +21,10 @@ public class TestSingleton {
     private HashMap<String, List<PsiTreeChangeEvent>> testMethod_event;
 
 
-    private HashMap<String, HashMap<Integer, List<String>>> coverageByClass;
+    private HashMap<String, HashMap<Integer, HashSet<String>>> coverageByClass;
 
     // line PsiElement : Array of test names strings
-    private HashMap<PsiElement, List<String>> psiElementToTests;
+    private HashMap<PsiElement, HashSet<String>> psiElementToTests;
     private HashMap<String, HashSet<PsiElement>> testToPsiElements;
 
     private TestSingleton() {
@@ -85,19 +85,19 @@ public class TestSingleton {
         this.testMethod_event = testMethod_event;
     }
 
-    public HashMap<String, HashMap<Integer, List<String>>> getCoverageByClass() {
+    public HashMap<String, HashMap<Integer, HashSet<String>>> getCoverageByClass() {
         return coverageByClass;
     }
 
-    public void setCoverageByClass(HashMap<String, HashMap<Integer, List<String>>> coverageByClass) {
+    public void setCoverageByClass(HashMap<String, HashMap<Integer, HashSet<String>>> coverageByClass) {
         this.coverageByClass = coverageByClass;
     }
 
-    public HashMap<PsiElement, List<String>> getPsiElementToTests() {
+    public HashMap<PsiElement, HashSet<String>> getPsiElementToTests() {
         return psiElementToTests;
     }
 
-    public void setPsiElementToTests(HashMap<PsiElement, List<String>> psiElementToTests) {
+    public void setPsiElementToTests(HashMap<PsiElement, HashSet<String>> psiElementToTests) {
         this.psiElementToTests = psiElementToTests;
     }
 

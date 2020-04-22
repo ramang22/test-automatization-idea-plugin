@@ -52,20 +52,20 @@ public class cloverParser {
         return searchString.substring(startIndexOfJSON + lenTestTargets, endIndexOfJSON);
     }
 
-    private void checkIfCouldBeAdded(HashMap<Integer, List<String>> test_lines, HashMap<Integer, String> test_id_test_name, String test_id, Integer line_num) {
+    private void checkIfCouldBeAdded(HashMap<Integer, HashSet<String>> test_lines, HashMap<Integer, String> test_id_test_name, String test_id, Integer line_num) {
         if (!test_id.equals("")) {
             if (test_lines.containsKey(line_num)) {
                 test_lines.get(line_num).add(test_id_test_name.get(Integer.parseInt(test_id)));
             } else {
-                List<String> newList = new ArrayList<>();
+                HashSet<String> newList = new HashSet<String>();
                 newList.add(test_id_test_name.get(Integer.parseInt(test_id)));
                 test_lines.put(line_num,newList);
             }
         }
     }
 
-    private HashMap<Integer, List<String>> getSrcFileLines(HashMap<Integer, String> test_id_test_name, String file_content) {
-        HashMap<Integer, List<String>> test_lines = new HashMap<>();
+    private HashMap<Integer, HashSet<String>> getSrcFileLines(HashMap<Integer, String> test_id_test_name, String file_content) {
+        HashMap<Integer, HashSet<String>> test_lines = new HashMap<>();
 
         int startIndexOfJSON = file_content.indexOf("clover.srcFileLines = ");
         int lenSrcFileLines = "clover.srcFileLines = ".length();
@@ -99,7 +99,7 @@ public class cloverParser {
         HashMap<Integer, String> test_id_test_name = this.getTestTargets(file_content_string);
         // get 2. property clover.srcFileLines
         if (test_id_test_name != null){
-            HashMap<Integer, List<String>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
+            HashMap<Integer, HashSet<String>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
             TestSingleton.getInstance().getCoverageByClass().put(className,testCoverageByLine);
         }else{
             System.out.println("V "+className+" som nenasiel ziadny coverage.");

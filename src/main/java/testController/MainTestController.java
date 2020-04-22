@@ -82,24 +82,6 @@ public class MainTestController {
 //            }
 //        }
 
-        for (PsiTreeChangeEvent event : events) {
-            PsiElement element = event.getOldChild();
-            if (element == null) {
-                System.out.println("Event element is null");
-                continue;
-            }
-            // check if is event elemement in coverage
-            // if no continue, if yes - get all tests linked to element
-            if (TestSingleton.getInstance().getPsiElementToTests().containsKey(element)) {
-                System.out.println("Found element " + element.getText());
-                testNames.addAll(TestSingleton.getInstance().getPsiElementToTests().get(element));
-            } else {
-                System.out.println("Old child Element "+element.getText()+" not in hash map : " + element.hashCode());
-                System.out.println("Old parent Element "+event.getOldParent().getText()+" not in hash map : " + element.hashCode());
-                System.out.println("New child parent Element "+event.getNewChild().getText()+" not in hash map : " + element.hashCode());
-                System.out.println("New parent Element "+event.getNewParent().getText()+" not in hash map : " + element.hashCode());
-            }
-        }
         /*
          *       TODO Test Prioritization
          *          1. for every test check last result in db

@@ -91,9 +91,8 @@ public class PsiHandler {
         return methodCalls;
     }
 
-    public void mapLinesToTests(PsiClass c, HashMap<Integer, List<String>> integerListHashMap) {
+    public void mapLinesToTests(PsiClass c, HashMap<Integer, HashSet<String>> integerListHashMap) {
         PsiMethod[] methods = c.getAllMethods();
-        HashSet<PsiElement> elementsToTests = new HashSet<>();
         for (PsiMethod method : methods) {
             for (PsiElement elem : method.getChildren()) {
                 this.mapElementToTest(elem, integerListHashMap);
@@ -101,7 +100,23 @@ public class PsiHandler {
         }
     }
 
-    public void mapElementToTest(PsiElement elem, HashMap<Integer, List<String>> map) {
+
+    private void addParentElement(PsiElement elem, HashMap<Integer, HashSet<String>> map, Integer lineNum){
+        PsiElement elemParent = elem.getParent();
+        if (elemParent != null){
+            if (TestSingleton.getInstance().getPsiElementToTests().containsKey(elemParent)) {
+                TestSingleton.getInstance().getPsiElementToTests().get(elemParent).addAll(map.get(lineNum + 1));
+            }else {
+                HashSet<String> newList = new HashSet<String>(map.get(lineNum + 1));
+                TestSingleton.getInstance().getPsiElementToTests().put(elemParent, newList);
+            }
+            System.out.println("Adding parent element  : " + elem.getText() + " ,Hash code : " + elem.hashCode());
+        }
+
+    }
+
+
+    public void mapElementToTest(PsiElement elem, HashMap<Integer, HashSet<String>> map) {
         if (elem == null) {
             return;
         }
@@ -110,14 +125,16 @@ public class PsiHandler {
             Document document = FileDocumentManager.getInstance().getDocument(elem.getContainingFile().getVirtualFile());
             int lineNum = document.getLineNumber(elem.getTextOffset());
             if (map.containsKey(lineNum + 1)) {
-                // TODO ADD PARENT ELEMENT
+
                 if (TestSingleton.getInstance().getPsiElementToTests().containsKey(elem)) {
                     TestSingleton.getInstance().getPsiElementToTests().get(elem).addAll(map.get(lineNum + 1));
+                    addParentElement(elem, map, lineNum);
                 } else {
-                    List<String> newList = new ArrayList<>(map.get(lineNum + 1));
+                    HashSet<String> newList = new HashSet<String>(map.get(lineNum + 1));
                     TestSingleton.getInstance().getPsiElementToTests().put(elem, newList);
+                    addParentElement(elem, map, lineNum);
                 }
-                System.out.println("Element : "+elem.getText()+" ,Hash code : "+elem.hashCode());
+                System.out.println("Adding element  : " + elem.getText() + " ,Hash code : " + elem.hashCode());
                 for (String testName : map.get(lineNum + 1)) {
                     if (TestSingleton.getInstance().getTestToPsiElements().containsKey(testName)) {
                         TestSingleton.getInstance().getTestToPsiElements().get(testName).add(elem);
