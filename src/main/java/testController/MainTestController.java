@@ -53,32 +53,44 @@ public class MainTestController {
 
         List<PsiTreeChangeEvent> events = TestSingleton.getInstance().getEvents();
         HashSet<String> testNames = new HashSet<>();
+//        for (PsiTreeChangeEvent event : events) {
+//            // TODO : make filter for event changes, filter out useless changes
+//            PsiElement psiTreeElement = event.getParent();
+//            PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ? (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
+//            if (parentMethod != null) {
+//                //TODO : selection
+//                String methodName = parentMethod.getName();
+//                if (TestSingleton.getInstance().getEventsForMethod().containsKey(methodName)) {
+//                    TestSingleton.getInstance().getEventsForMethod().get(methodName).add(event);
+//                } else {
+//                    List<PsiTreeChangeEvent> new_event_list = new ArrayList<>();
+//                    new_event_list.add(event);
+//                    TestSingleton.getInstance().getEventsForMethod().put(methodName, new_event_list);
+//                }
+//                if (TestSingleton.getInstance().getTestMap().containsKey(methodName)) {
+//                    testNames.addAll(TestSingleton.getInstance().getTestMap().get(methodName));
+//                    for (String test_name : TestSingleton.getInstance().getTestMap().get(methodName)) {
+//                        if (TestSingleton.getInstance().getTestMethod_event().containsKey(test_name)) {
+//                            TestSingleton.getInstance().getTestMethod_event().get(test_name).add(event);
+//                        } else {
+//                            List<PsiTreeChangeEvent> new_list = new ArrayList<>();
+//                            new_list.add(event);
+//                            TestSingleton.getInstance().getTestMethod_event().put(test_name, new_list);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         for (PsiTreeChangeEvent event : events) {
-            // TODO : make filter for event changes, filter out useless changes
-            PsiElement psiTreeElement = event.getParent();
-            PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ? (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
-            if (parentMethod != null) {
-                //TODO : selection
-                String methodName = parentMethod.getName();
-                if (TestSingleton.getInstance().getEventsForMethod().containsKey(methodName)) {
-                    TestSingleton.getInstance().getEventsForMethod().get(methodName).add(event);
-                } else {
-                    List<PsiTreeChangeEvent> new_event_list = new ArrayList<>();
-                    new_event_list.add(event);
-                    TestSingleton.getInstance().getEventsForMethod().put(methodName, new_event_list);
-                }
-                if (TestSingleton.getInstance().getTestMap().containsKey(methodName)) {
-                    testNames.addAll(TestSingleton.getInstance().getTestMap().get(methodName));
-                    for (String test_name : TestSingleton.getInstance().getTestMap().get(methodName)) {
-                        if (TestSingleton.getInstance().getTestMethod_event().containsKey(test_name)) {
-                            TestSingleton.getInstance().getTestMethod_event().get(test_name).add(event);
-                        } else {
-                            List<PsiTreeChangeEvent> new_list = new ArrayList<>();
-                            new_list.add(event);
-                            TestSingleton.getInstance().getTestMethod_event().put(test_name, new_list);
-                        }
-                    }
-                }
+            PsiElement element = event.getElement();
+            if (element == null) {
+                continue;
+            }
+            // check if is event elemement in coverage
+            // if no continue, if yes - get all tests linked to element
+            if (TestSingleton.getInstance().getPsiElementToTests().containsKey(element)) {
+                testNames.addAll(TestSingleton.getInstance().getPsiElementToTests().get(element));
             }
         }
 

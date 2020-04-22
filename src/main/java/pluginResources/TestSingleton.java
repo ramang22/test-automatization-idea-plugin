@@ -6,6 +6,7 @@ import com.intellij.psi.PsiTreeChangeEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class TestSingleton {
@@ -24,6 +25,7 @@ public class TestSingleton {
 
     // line PsiElement : Array of test names strings
     private HashMap<PsiElement, List<String>> psiElementToTests;
+    private HashMap<String, HashSet<PsiElement>> testToPsiElements;
 
     private TestSingleton() {
         testMap = new HashMap<>();
@@ -33,6 +35,7 @@ public class TestSingleton {
         testMethod_event = new HashMap<>();
         coverageByClass = new HashMap<>();
         psiElementToTests = new HashMap<>();
+        testToPsiElements = new HashMap<>();
     }
 
     public static TestSingleton getInstance() {
@@ -96,6 +99,14 @@ public class TestSingleton {
 
     public void setPsiElementToTests(HashMap<PsiElement, List<String>> psiElementToTests) {
         this.psiElementToTests = psiElementToTests;
+    }
+
+    public HashMap<String, HashSet<PsiElement>> getTestToPsiElements() {
+        return testToPsiElements;
+    }
+
+    public void setTestToPsiElements(HashMap<String, HashSet<PsiElement>> testToPsiElements) {
+        this.testToPsiElements = testToPsiElements;
     }
 }
 
