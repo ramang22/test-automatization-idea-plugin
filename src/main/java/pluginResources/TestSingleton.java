@@ -18,7 +18,10 @@ public class TestSingleton {
     private HashMap<String, String> testClasses;
 
     // key = test method name, value = lists of changes
-    private HashMap<String, List<PsiTreeChangeEvent>> testMethod_event;
+    private HashMap<String, List<PsiElement>> testMethod_event;
+
+    //list of test names for testing
+    private HashSet<String> testsForExecution;
 
 
     private HashMap<String, HashMap<Integer, HashSet<String>>> coverageByClass;
@@ -36,6 +39,7 @@ public class TestSingleton {
         coverageByClass = new HashMap<>();
         psiElementToTests = new HashMap<>();
         testToPsiElements = new HashMap<>();
+        testsForExecution = new HashSet<>();
     }
 
     public static TestSingleton getInstance() {
@@ -77,11 +81,11 @@ public class TestSingleton {
         this.testClasses = testClasses;
     }
 
-    public HashMap<String, List<PsiTreeChangeEvent>> getTestMethod_event() {
+    public HashMap<String, List<PsiElement>> getTestMethod_event() {
         return testMethod_event;
     }
 
-    public void setTestMethod_event(HashMap<String, List<PsiTreeChangeEvent>> testMethod_event) {
+    public void setTestMethod_event(HashMap<String, List<PsiElement>> testMethod_event) {
         this.testMethod_event = testMethod_event;
     }
 
@@ -107,6 +111,14 @@ public class TestSingleton {
 
     public void setTestToPsiElements(HashMap<String, HashSet<PsiElement>> testToPsiElements) {
         this.testToPsiElements = testToPsiElements;
+    }
+
+    public HashSet<String> getTestsForExecution() {
+        return testsForExecution;
+    }
+
+    public void setTestsForExecution(HashSet<String> testsForExecution) {
+        this.testsForExecution = testsForExecution;
     }
 }
 

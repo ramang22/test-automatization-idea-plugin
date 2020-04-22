@@ -8,6 +8,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import pluginResources.TestSingleton;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class CodeChangeHandlers {
 
 
@@ -19,7 +23,7 @@ public class CodeChangeHandlers {
         PsiElement newParent = psiTreeChangeEvent.getNewParent();
         PsiElement element = psiTreeChangeEvent.getElement();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
-
+        PsiElement element_child = psiTreeChangeEvent.getChild();
         if (oldChild != null) {
             System.out.println("Old child Element : " + oldChild.getText() + " ,hashCode : " + oldChild.hashCode());
         }
@@ -38,34 +42,34 @@ public class CodeChangeHandlers {
         if (element_parent != null) {
             System.out.println("Element parent : " + element_parent.getText() + " ,hashCode : " + element_parent.hashCode());
         }
+        if (element_child != null) {
+            System.out.println("Element child : " + element_child.getText() + " ,hashCode : " + element_child.hashCode());
+        }
 
     }
 
-    public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
-        this.printEventElements(psiTreeChangeEvent);
-        // TODO MAKE HANDLER FOR EVERY BEFORE AND ADD
-        // TODO Ignore changes in tests
-        PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
-                (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
-        if (parentMethod == null) {
-            PsiClass parentClass = psiTreeElement instanceof PsiClass ?
-                    (PsiClass) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiClass.class);
-            if (parentClass != null) {
-                PsiElement[] classChildren = parentClass.getChildren();
-                for (PsiElement classChild : classChildren) {
-                    if (classChild instanceof PsiMethod) {
-                        PsiMethod psiMethod = (PsiMethod) classChild;
-                        System.out.println("PSI METHOD NAME: " + psiMethod.getName());
+    public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent, PsiElement element, PsiElement inMap) {
+        if (this.checkIfEventIsInMethods(psiTreeChangeEvent)) {
+            if (TestSingleton.getInstance().getPsiElementToTests().containsKey(inMap)) {
+                //add tests to queue
+                HashSet<String> testNames = new HashSet<>(TestSingleton.getInstance().getPsiElementToTests().get(inMap));
+                // add event to events for highlights
+                for (String name : testNames) {
+                    TestSingleton.getInstance().getTestsForExecution().add(name);
+                    if (TestSingleton.getInstance().getTestMethod_event().containsKey(name)) {
+                        TestSingleton.getInstance().getTestMethod_event().get(name).add(element);
+                    } else {
+                        List<PsiElement> newList = new ArrayList<>();
+                        newList.add(element);
+                        TestSingleton.getInstance().getTestMethod_event().put(name, newList);
                     }
                 }
+
             }
-        } else {
-            TestSingleton.getInstance().getEvents().add(psiTreeChangeEvent);
         }
     }
 
-    private Boolean checkIfEventIsInMethods(PsiTreeChangeEvent psiTreeChangeEvent){
+    private Boolean checkIfEventIsInMethods(PsiTreeChangeEvent psiTreeChangeEvent) {
         PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
         PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
                 (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
@@ -77,14 +81,8 @@ public class CodeChangeHandlers {
 //        New child Element : x-y ,hashCode : 34460
 //        Element parent : return xy; ,hashCode : 565900040
         // TODO Extract element parent
-        if (this.checkIfEventIsInMethods(psiTreeChangeEvent)){
-            PsiElement element_parent = psiTreeChangeEvent.getParent();
-            if (TestSingleton.getInstance().getPsiElementToTests().containsKey(element_parent)){
-                // add event to events for highlights
-                System.out.println(TestSingleton.getInstance().getPsiElementToTests().get(element_parent));
-                // add tests for that event to test queue
-            }
-        }
+        PsiElement element_parent = psiTreeChangeEvent.getParent();
+        this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
     }
 
     public void handlerBeforeChildMovement(PsiTreeChangeEvent psiTreeChangeEvent) {
@@ -105,7 +103,8 @@ public class CodeChangeHandlers {
 
     public void handlerBeforeChildRemoval(PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO handle element parent
-        this.printEventElements(psiTreeChangeEvent);
+        PsiElement element_parent = psiTreeChangeEvent.getParent();
+        this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
     }
 
     public void handlerBeforeChildAddition(PsiTreeChangeEvent psiTreeChangeEvent) {
@@ -118,6 +117,13 @@ public class CodeChangeHandlers {
         //            xreturn x-y;
         //        } ,hashCode : 1371802751
         // TODO handle parent
-        this.printEventElements(psiTreeChangeEvent);
+        PsiElement element_parent = psiTreeChangeEvent.getParent();
+        this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
+    }
+
+    public void handlerChildAdded(PsiTreeChangeEvent psiTreeChangeEvent) {
+        PsiElement element_child = psiTreeChangeEvent.getChild();
+        PsiElement element_parent = psiTreeChangeEvent.getParent();
+        this.handleCodeChange(psiTreeChangeEvent,element_child,element_parent);
     }
 }

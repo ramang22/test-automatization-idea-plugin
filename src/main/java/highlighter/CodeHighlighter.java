@@ -85,10 +85,10 @@ public class CodeHighlighter {
         }
     }
 
-    private static void highLightLine(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
+    private static void highLightLine(@NotNull PsiElement psiTreeChangeEvent) {
+        PsiElement psiTreeElement = psiTreeChangeEvent;
         Document document = FileDocumentManager.getInstance().getDocument(psiTreeElement.getContainingFile().getVirtualFile());
-        int lineNum = document.getLineNumber(psiTreeChangeEvent.getChild().getTextOffset());
+        int lineNum = document.getLineNumber(psiTreeChangeEvent.getTextOffset());
         final TextAttributes textattributes = new TextAttributes(null, JBColor.BLUE, null, EffectType.LINE_UNDERSCORE, Font.PLAIN);
         final Project project = psiTreeElement.getProject();
         final FileEditorManager editorManager = FileEditorManager.getInstance(project);
@@ -154,10 +154,10 @@ public class CodeHighlighter {
 
     public static void highlightTest(String test_name, Boolean test_passed) {
         // get all events for tests
-        List<PsiTreeChangeEvent> events = TestSingleton.getInstance().getTestMethod_event().get(test_name);
+        List<PsiElement> events = TestSingleton.getInstance().getTestMethod_event().get(test_name);
         HashSet<PsiElement> methods = new HashSet<>();
         // for every event
-        for (PsiTreeChangeEvent event : events) {
+        for (PsiElement event : events) {
             // TODO : check if highlighted
 
             // highlight
