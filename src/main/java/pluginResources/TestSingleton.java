@@ -12,9 +12,7 @@ import java.util.List;
 public class TestSingleton {
     private static TestSingleton INSTANCE = null;
 
-    private HashMap<String, List<String>> testMap;
-    private List<PsiTreeChangeEvent> events;
-    private HashMap<String, List<PsiTreeChangeEvent>> eventsForMethod;
+    //
     private HashMap<String, String> testClasses;
 
     // key = test method name, value = lists of changes
@@ -31,9 +29,7 @@ public class TestSingleton {
     private HashMap<String, HashSet<PsiElement>> testToPsiElements;
 
     private TestSingleton() {
-        testMap = new HashMap<>();
-        events = new ArrayList<>();
-        eventsForMethod = new HashMap<>();
+
         testClasses = new HashMap<>();
         testMethod_event = new HashMap<>();
         coverageByClass = new HashMap<>();
@@ -47,30 +43,6 @@ public class TestSingleton {
             INSTANCE = new TestSingleton();
         }
         return INSTANCE;
-    }
-
-    public HashMap<String, List<String>> getTestMap() {
-        return testMap;
-    }
-
-    public void setTestMap(HashMap<String, List<String>> testMap) {
-        this.testMap = testMap;
-    }
-
-    public List<PsiTreeChangeEvent> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<PsiTreeChangeEvent> events) {
-        this.events = events;
-    }
-
-    public HashMap<String, List<PsiTreeChangeEvent>> getEventsForMethod() {
-        return eventsForMethod;
-    }
-
-    public void setEventsForMethod(HashMap<String, List<PsiTreeChangeEvent>> eventsForMethod) {
-        this.eventsForMethod = eventsForMethod;
     }
 
     public HashMap<String, String> getTestClasses() {
