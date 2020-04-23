@@ -101,13 +101,13 @@ public class CodeChangeHandlers {
         this.printEventElements(psiTreeChangeEvent);
     }
 
-    public void handlerBeforeChildRemoval(PsiTreeChangeEvent psiTreeChangeEvent) {
+    public void handlerBeforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO handle element parent
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
     }
 
-    public void handlerBeforeChildAddition(PsiTreeChangeEvent psiTreeChangeEvent) {
+    public void handlerBeforeChildAddition(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         //Element parent : {
         //            x++;
         //            return x-y;
@@ -121,7 +121,7 @@ public class CodeChangeHandlers {
         this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
     }
 
-    public void handlerChildAdded(PsiTreeChangeEvent psiTreeChangeEvent) {
+    public void handlerChildAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         PsiElement element_child = psiTreeChangeEvent.getChild();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent,element_child,element_parent);

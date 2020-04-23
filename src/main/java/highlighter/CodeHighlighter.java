@@ -20,19 +20,21 @@ import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 
 public class CodeHighlighter {
 
-    CodeHighlighter code_highlighter = new CodeHighlighter();
+    /* TODO Ask which methods do we wanna use for gutter render
+     https://github.com/JetBrains/intellij-community/blob/master/platform/editor-ui-api/src/com/intellij/openapi/editor/markup/GutterIconRenderer.java
+     */
+
+    public static int HIGHLIGHT_LAYER = 66;
 
     public static void addLineHighlight(Document document, int lineNumber,
                                         String text) {
         //setupLineStyle(type);
-        Icon highlightIcon = IconLoader.getIcon("/META-INF/fail.png");
-        addGutterIcon(getRangeHighlighter(document, lineNumber), highlightIcon, text);
+        addGutterIcon(getRangeHighlighter(document, lineNumber), CustomIcons.FAIL_GUTTER, text);
     }
 
     @NotNull
@@ -40,7 +42,7 @@ public class CodeHighlighter {
         MarkupModel markupModel = getMarkupModel(document);
         TextAttributes textAttributes = getTextAttributes();
         RangeHighlighter highlighter;
-        highlighter = markupModel.addLineHighlighter(lineNumber, 66, textAttributes);
+        highlighter = markupModel.addLineHighlighter(lineNumber, HIGHLIGHT_LAYER, textAttributes);
         return highlighter;
     }
 
@@ -77,9 +79,9 @@ public class CodeHighlighter {
 
     @NotNull
     private static TextAttributes getTextAttributes() {
-        TextAttributes textAttributes =  new TextAttributes();
-        textAttributes.setBackgroundColor(JBColor.RED);
-        textAttributes.setErrorStripeColor(JBColor.BLUE);
+        TextAttributes textAttributes = new TextAttributes();
+        textAttributes.setBackgroundColor(CustomColors.ERROR);
+        textAttributes.setErrorStripeColor(CustomColors.ERROR);
         return textAttributes;
     }
 
@@ -99,7 +101,7 @@ public class CodeHighlighter {
 
         MarkupModel markupModel = getMarkupModel(document);
         TextAttributes textAttributes = getTextAttributes();
-        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNum, 66, textAttributes);
+        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNum, HIGHLIGHT_LAYER, textAttributes);
     }
 
     private static void highLightLineWithGutter(@NotNull PsiElement element) {
@@ -144,7 +146,7 @@ public class CodeHighlighter {
     private static boolean intersectsAndMatchLayer(@NotNull RangeHighlighter highlighter, @NotNull TextRange lineTextRange) {
         return !(highlighter.getEndOffset() < lineTextRange.getStartOffset()
                 || highlighter.getStartOffset() > lineTextRange.getEndOffset())
-                && highlighter.getLayer() == 66;
+                && highlighter.getLayer() == HIGHLIGHT_LAYER;
     }
 
     public static void highlightTest(String test_name, Boolean test_passed) {
@@ -158,8 +160,8 @@ public class CodeHighlighter {
             highLightLine(event);
 
             // get parent method
-            PsiElement psiTreeElement = event.getParent();
-            PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ? (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
+            //PsiElement psiTreeElement = event.getParent();
+            PsiMethod parentMethod = event instanceof PsiMethod ? (PsiMethod) event : PsiTreeUtil.getTopmostParentOfType(event, PsiMethod.class);
             methods.add(parentMethod);
         }
 

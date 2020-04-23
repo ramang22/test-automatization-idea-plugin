@@ -13,7 +13,6 @@ public class CodeChangeListener implements PsiTreeChangeListener {
     @Override
     public void childAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         codeChangeHanlder.handlerChildAdded(psiTreeChangeEvent);
-        //handleCodeChange(psiTreeChangeEvent);
     }
 
     @Override
@@ -46,12 +45,12 @@ public class CodeChangeListener implements PsiTreeChangeListener {
 
     @Override
     public void beforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        //codeChangeHanlder.handlerBeforeChildRemoval(psiTreeChangeEvent);
+        codeChangeHanlder.handlerBeforeChildRemoval(psiTreeChangeEvent);
     }
 
     @Override
     public void beforeChildReplacement(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        //codeChangeHanlder.handlerBeforeChildReplacement(psiTreeChangeEvent);
+        codeChangeHanlder.handlerBeforeChildReplacement(psiTreeChangeEvent);
     }
 
     @Override
