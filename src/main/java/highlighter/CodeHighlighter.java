@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pluginResources.HighlightSingleton;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
@@ -60,6 +61,12 @@ public class CodeHighlighter {
             public Icon getIcon() {
                 return icon;
             }
+
+            @Override
+            @Nullable
+            public String getTooltipText() {
+                return text;
+            }
         });
 
     }
@@ -70,18 +77,17 @@ public class CodeHighlighter {
 
     @NotNull
     private static TextAttributes getTextAttributes() {
-        TextAttributes textAttributes = null;
-        textAttributes = new TextAttributes();
+        TextAttributes textAttributes =  new TextAttributes();
         textAttributes.setBackgroundColor(JBColor.RED);
-        textAttributes.setErrorStripeColor(JBColor.RED);
+        textAttributes.setErrorStripeColor(JBColor.BLUE);
         return textAttributes;
     }
 
-    private static void saveHighlight(Document document, int line_num, Boolean withGutter){
-        if (withGutter){
-            HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().add(new HighlightedLane(document,line_num));
-        }else{
-            HighlightSingleton.getInstance().getHighlighted_lanes().add(new HighlightedLane(document,line_num));
+    private static void saveHighlight(Document document, int line_num, Boolean withGutter) {
+        if (withGutter) {
+            HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().add(new HighlightedLane(document, line_num));
+        } else {
+            HighlightSingleton.getInstance().getHighlighted_lanes().add(new HighlightedLane(document, line_num));
         }
     }
 
@@ -89,63 +95,52 @@ public class CodeHighlighter {
         PsiElement psiTreeElement = psiTreeChangeEvent;
         Document document = FileDocumentManager.getInstance().getDocument(psiTreeElement.getContainingFile().getVirtualFile());
         int lineNum = document.getLineNumber(psiTreeChangeEvent.getTextOffset());
-        final TextAttributes textattributes = new TextAttributes(null, JBColor.BLUE, null, EffectType.LINE_UNDERSCORE, Font.PLAIN);
-        final Project project = psiTreeElement.getProject();
-        final FileEditorManager editorManager = FileEditorManager.getInstance(project);
-        final Editor editor = editorManager.getSelectedTextEditor();
-
         saveHighlight(document, lineNum, false);
 
-        //editor.getMarkupModel().addLineHighlighter(lineNum, 66, textattributes);
         MarkupModel markupModel = getMarkupModel(document);
-        RangeHighlighter highlighter;
         TextAttributes textAttributes = getTextAttributes();
-        highlighter = markupModel.addLineHighlighter(lineNum, 66, textAttributes);
-
+        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNum, 66, textAttributes);
     }
 
-    private static void highLightLineWithGutter(@NotNull PsiElement psiTreeChangeEvent) {
-        PsiFile containingFile = psiTreeChangeEvent.getContainingFile();
+    private static void highLightLineWithGutter(@NotNull PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
         FileViewProvider fileViewProvider = containingFile.getViewProvider();
         Document document = fileViewProvider.getDocument();
-        int textOffset = psiTreeChangeEvent.getTextOffset();
+        int textOffset = element.getTextOffset();
         int lineNumber = document.getLineNumber(textOffset);
 
         saveHighlight(document, lineNumber, true);
 
-        addLineHighlight(document, lineNumber, "GUtter");
+        addLineHighlight(document, lineNumber, "TEXT PLACE HOLDER");
     }
 
     private static void removeLineHighlight(Document document, int lineNumber) {
         MarkupModel markupModel = getMarkupModel(document);
         TextRange lineTextRange = DocumentUtil.getLineTextRange(document, lineNumber);
         for (RangeHighlighter highlighter : markupModel.getAllHighlighters()) {
-
-          //  if (intersectsAndMatchLayer(highlighter, lineTextRange)) {
-
-                markupModel.removeHighlighter(highlighter);
+            //  if (intersectsAndMatchLayer(highlighter, lineTextRange)) {
+            markupModel.removeHighlighter(highlighter);
             //}
         }
     }
 
-    public static void removeOldHighlights(){
+    public static void removeOldHighlights() {
 
         if (!HighlightSingleton.getInstance().getHighlighted_lanes().isEmpty()) {
             for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
                 int lim_num = h.getLine_num();
-                System.out.println("Removing without gutter "+lim_num);
                 removeLineHighlight(h.getDocument(), lim_num);
             }
         }
         if (!HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().isEmpty()) {
             for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter()) {
-                System.out.println("Removing with gutter "+h.getLine_num());
                 removeLineHighlight(h.getDocument(), h.getLine_num());
             }
         }
         HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().clear();
         HighlightSingleton.getInstance().getHighlighted_lanes().clear();
     }
+
     private static boolean intersectsAndMatchLayer(@NotNull RangeHighlighter highlighter, @NotNull TextRange lineTextRange) {
         return !(highlighter.getEndOffset() < lineTextRange.getStartOffset()
                 || highlighter.getStartOffset() > lineTextRange.getEndOffset())
@@ -158,7 +153,6 @@ public class CodeHighlighter {
         HashSet<PsiElement> methods = new HashSet<>();
         // for every event
         for (PsiElement event : events) {
-            // TODO : check if highlighted
 
             // highlight
             highLightLine(event);
@@ -168,8 +162,9 @@ public class CodeHighlighter {
             PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ? (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
             methods.add(parentMethod);
         }
+
+        // hightlight parent methods with gutter
         for (PsiElement method : methods) {
-            // hightlight parent methods with gutter
             highLightLineWithGutter(method);
         }
     }
