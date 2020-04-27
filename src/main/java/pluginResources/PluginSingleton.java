@@ -6,8 +6,10 @@ import ide.Tester;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Timer;
 
 public class PluginSingleton {
+    public static int TIMER_DELAY = 3;
     private static PluginSingleton INSTANCE = null;
     private Project project;
     private String projectRootFolderPath;
@@ -15,6 +17,8 @@ public class PluginSingleton {
     private String clover_db_path;
     private String clover_html_report_path;
     private HashSet<String> package_file_paths;
+    private Timer timer;
+    private boolean timerWorking;
     Tester tester;
 
 
@@ -26,6 +30,8 @@ public class PluginSingleton {
         this.clover_db_path = "";
         this.clover_html_report_path = "";
         this.package_file_paths = new HashSet<>();
+        this.timer = new Timer();
+        this.timerWorking = false;
     }
 
     public static PluginSingleton getInstance()
@@ -93,5 +99,21 @@ public class PluginSingleton {
 
     public void setPackage_file_paths(HashSet<String> package_file_paths) {
         this.package_file_paths = package_file_paths;
+    }
+
+    public boolean isTimerWorking() {
+        return timerWorking;
+    }
+
+    public void setTimerWorking(boolean timerWorking) {
+        this.timerWorking = timerWorking;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 }

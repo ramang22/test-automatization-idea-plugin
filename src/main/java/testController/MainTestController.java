@@ -1,11 +1,15 @@
 package testController;
 
+import com.intellij.psi.PsiElement;
 import highlighter.CodeHighlighter;
 import opencloverController.cloverParser;
 import org.json.JSONException;
 import pluginResources.TestSingleton;
 import mavenRunner.*;
 import opencloverController.*;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class MainTestController {
 
@@ -35,7 +39,10 @@ public class MainTestController {
         // TODO FIX clean all previous highlights
         CodeHighlighter.removeOldHighlights();
 
-
+        //copy event map into new map for execution
+        HashMap<String, List<PsiElement>> copiedEvents = new HashMap<>(TestSingleton.getInstance().getTestMethod_event());
+        TestSingleton.getInstance().setTestMethod_event_forExecution(copiedEvents);
+        TestSingleton.getInstance().getTestMethod_event().clear();
         /*
          *       TODO Test Prioritization
          *          1. for every test check last result in db
@@ -51,6 +58,6 @@ public class MainTestController {
         }
 
         // TODO clean test singleton, delete changes from last run
-        TestSingleton.getInstance().getTestMethod_event().clear();
+        TestSingleton.getInstance().getTestMethod_event_forExecution().clear();
     }
 }

@@ -39,6 +39,7 @@ public class CodeHighlighter {
 
     @NotNull
     private static RangeHighlighter getRangeHighlighter(Document document, int lineNumber) {
+
         MarkupModel markupModel = getMarkupModel(document);
         TextAttributes textAttributes = getTextAttributes();
         RangeHighlighter highlighter;
@@ -94,14 +95,24 @@ public class CodeHighlighter {
     }
 
     private static void highLightLine(@NotNull PsiElement psiTreeChangeEvent) {
-        PsiElement psiTreeElement = psiTreeChangeEvent;
-        Document document = FileDocumentManager.getInstance().getDocument(psiTreeElement.getContainingFile().getVirtualFile());
-        int lineNum = document.getLineNumber(psiTreeChangeEvent.getTextOffset());
-        saveHighlight(document, lineNum, false);
+        SwingUtilities.invokeLater(() -> {
+            PsiElement psiTreeElement = psiTreeChangeEvent;
+            Document document = FileDocumentManager.getInstance().getDocument(psiTreeElement.getContainingFile().getVirtualFile());
+            int lineNum = document.getLineNumber(psiTreeChangeEvent.getTextOffset());
+            saveHighlight(document, lineNum, false);
 
-        MarkupModel markupModel = getMarkupModel(document);
-        TextAttributes textAttributes = getTextAttributes();
-        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNum, HIGHLIGHT_LAYER, textAttributes);
+            MarkupModel markupModel = getMarkupModel(document);
+            TextAttributes textAttributes = getTextAttributes();
+            RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNum, HIGHLIGHT_LAYER, textAttributes);
+        });
+//        PsiElement psiTreeElement = psiTreeChangeEvent;
+//        Document document = FileDocumentManager.getInstance().getDocument(psiTreeElement.getContainingFile().getVirtualFile());
+//        int lineNum = document.getLineNumber(psiTreeChangeEvent.getTextOffset());
+//        saveHighlight(document, lineNum, false);
+//
+//        MarkupModel markupModel = getMarkupModel(document);
+//        TextAttributes textAttributes = getTextAttributes();
+//        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNum, HIGHLIGHT_LAYER, textAttributes);
     }
 
     private static void highLightLineWithGutter(@NotNull PsiElement element) {
@@ -120,27 +131,28 @@ public class CodeHighlighter {
         MarkupModel markupModel = getMarkupModel(document);
         TextRange lineTextRange = DocumentUtil.getLineTextRange(document, lineNumber);
         for (RangeHighlighter highlighter : markupModel.getAllHighlighters()) {
-            //  if (intersectsAndMatchLayer(highlighter, lineTextRange)) {
+              if (intersectsAndMatchLayer(highlighter, lineTextRange)) {
             markupModel.removeHighlighter(highlighter);
-            //}
+            }
         }
     }
 
     public static void removeOldHighlights() {
-
-        if (!HighlightSingleton.getInstance().getHighlighted_lanes().isEmpty()) {
-            for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
-                int lim_num = h.getLine_num();
-                removeLineHighlight(h.getDocument(), lim_num);
+        SwingUtilities.invokeLater(() -> {
+            if (!HighlightSingleton.getInstance().getHighlighted_lanes().isEmpty()) {
+                for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
+                    int lim_num = h.getLine_num();
+                    removeLineHighlight(h.getDocument(), lim_num);
+                }
             }
-        }
-        if (!HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().isEmpty()) {
-            for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter()) {
-                removeLineHighlight(h.getDocument(), h.getLine_num());
+            if (!HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().isEmpty()) {
+                for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter()) {
+                    removeLineHighlight(h.getDocument(), h.getLine_num());
+                }
             }
-        }
-        HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().clear();
-        HighlightSingleton.getInstance().getHighlighted_lanes().clear();
+            HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().clear();
+            HighlightSingleton.getInstance().getHighlighted_lanes().clear();
+        });
     }
 
     private static boolean intersectsAndMatchLayer(@NotNull RangeHighlighter highlighter, @NotNull TextRange lineTextRange) {
@@ -151,24 +163,26 @@ public class CodeHighlighter {
 
     public static void highlightTest(String test_name, Boolean test_passed) {
         // get all events for tests
-        List<PsiElement> events = TestSingleton.getInstance().getTestMethod_event().get(test_name);
+        List<PsiElement> events = TestSingleton.getInstance().getTestMethod_event_forExecution().get(test_name);
         HashSet<PsiElement> methods = new HashSet<>();
         // for every event
-        for (PsiElement event : events) {
+        SwingUtilities.invokeLater(() -> {
+            for (PsiElement event : events) {
 
-            // highlight
-            highLightLine(event);
+                // highlight
+                highLightLine(event);
 
-            // get parent method
-            //PsiElement psiTreeElement = event.getParent();
-            PsiMethod parentMethod = event instanceof PsiMethod ? (PsiMethod) event : PsiTreeUtil.getTopmostParentOfType(event, PsiMethod.class);
-            methods.add(parentMethod);
-        }
+                // get parent method
+                //PsiElement psiTreeElement = event.getParent();
+                PsiMethod parentMethod = event instanceof PsiMethod ? (PsiMethod) event : PsiTreeUtil.getTopmostParentOfType(event, PsiMethod.class);
+                methods.add(parentMethod);
+            }
 
-        // hightlight parent methods with gutter
-        for (PsiElement method : methods) {
-            highLightLineWithGutter(method);
-        }
+            // hightlight parent methods with gutter
+            for (PsiElement method : methods) {
+                highLightLineWithGutter(method);
+            }
+        });
     }
 
 }

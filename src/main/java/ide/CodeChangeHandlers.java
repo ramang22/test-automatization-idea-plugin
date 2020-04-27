@@ -6,14 +6,15 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
+import testController.MainTestController;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class CodeChangeHandlers {
 
+    public static MainTestController testStater = new MainTestController();
 
     public void printEventElements(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
 
@@ -76,11 +77,40 @@ public class CodeChangeHandlers {
         return parentMethod != null;
     }
 
+    private void checkTimer(){
+        if (PluginSingleton.getInstance().isTimerWorking()){
+            // stop timer and start again
+            PluginSingleton.getInstance().getTimer().cancel();
+            PluginSingleton.getInstance().setTimer(new Timer());
+            SheduleNewTimer();
+        }else {
+            // start timer
+            PluginSingleton.getInstance().setTimerWorking(true);
+            SheduleNewTimer();
+        }
+    }
+
+    private void SheduleNewTimer() {
+        PluginSingleton.getInstance().getTimer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                try {
+                    testStater.runAllTests();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                PluginSingleton.getInstance().setTimerWorking(false);
+            }
+        }, PluginSingleton.TIMER_DELAY*1000);
+    }
+
     public void handlerBeforeChildReplacement(PsiTreeChangeEvent psiTreeChangeEvent) {
 //        Old child Element : xy ,hashCode : 31266
 //        New child Element : x-y ,hashCode : 34460
 //        Element parent : return xy; ,hashCode : 565900040
         // TODO Extract element parent
+        this.checkTimer();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
     }
@@ -98,11 +128,13 @@ public class CodeChangeHandlers {
 
     public void handlerBeforePropertyChange(PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO idk what it does
+        this.checkTimer();
         this.printEventElements(psiTreeChangeEvent);
     }
 
     public void handlerBeforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO handle element parent
+        this.checkTimer();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
     }
@@ -122,6 +154,7 @@ public class CodeChangeHandlers {
     }
 
     public void handlerChildAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
+        this.checkTimer();
         PsiElement element_child = psiTreeChangeEvent.getChild();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent,element_child,element_parent);
