@@ -89,7 +89,8 @@ public class DbController {
 
     public List<TestResultDb> getAllTestResultsById(int test_id) {
         String sql = "SELECT *"
-                + "FROM testResult WHERE test_id = ?";
+                + "FROM testResult WHERE test_id = ?"
+                + "ORDER BY test_run DESC";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -157,5 +158,14 @@ public class DbController {
             System.out.println(test_run);
             insertTestResult(test_id, test_run+1, result, time);
         }
+    }
+
+    public List<TestResultDb> getAllTestResultsByName(String test_name){
+        List<TestDb> tests = getTestByTestName(test_name);
+        List<TestResultDb> resultsForTest = new ArrayList<>();
+        for (TestDb test : tests){
+            resultsForTest.addAll(getAllTestResultsById(test.getId()));
+        }
+        return resultsForTest;
     }
 }
