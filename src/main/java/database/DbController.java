@@ -31,13 +31,12 @@ public class DbController {
         return conn;
     }
 
-    public void insert(String name, int last_result) {
-        String sql = "INSERT INTO test(name,lastResult) VALUES(?,?)";
+    public void insert(String name) {
+        String sql = "INSERT INTO test(name) VALUES(?)";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, name);
-            pstmt.setInt(2, last_result);
             pstmt.executeUpdate();
             System.out.println("New test inserted");
         } catch (SQLException e) {
@@ -60,7 +59,7 @@ public class DbController {
             // loop through the result set
             List<TestDb> rs_tests = new ArrayList<>();
             while (rs.next()) {
-                rs_tests.add(new TestDb(rs.getString("name"), rs.getInt("id"), rs.getInt("lastResult")));
+                rs_tests.add(new TestDb(rs.getString("name"), rs.getInt("id")));
             }
             return rs_tests;
         } catch (SQLException e) {
@@ -69,7 +68,7 @@ public class DbController {
         return null;
     }
 
-    public void update(int id, String name, Integer last_result) {
+    public void update(int id, String name) {
         String sql = "UPDATE Test SET name = ? , "
                 + "lastResult = ? "
                 + "WHERE id = ?";
@@ -79,7 +78,6 @@ public class DbController {
 
             // set the corresponding param
             pstmt.setString(1, name);
-            pstmt.setDouble(2, last_result);
             pstmt.setInt(3, id);
             // update
             pstmt.executeUpdate();
@@ -89,4 +87,75 @@ public class DbController {
         }
     }
 
+    public List<TestResultDb> getAllTestResultsById(int test_id) {
+        String sql = "SELECT *"
+                + "FROM testResult WHERE test_id = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the value
+            pstmt.setInt(1, test_id);
+            //
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            List<TestResultDb> rs_tests = new ArrayList<>();
+            //(int id, int test_id, int test_run,String test_name, int result, String exec_time)
+            while (rs.next()) {
+                rs_tests.add(new TestResultDb(
+                        rs.getInt("id"),
+                        rs.getInt("test_id"),
+                        rs.getInt("test_run"),
+                        "",
+                        rs.getInt("result"),
+                        rs.getString("exec_time")
+                ));
+            }
+            return rs_tests;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public void addTestToDb(String testName){
+        // check if is test in db
+        List<TestDb> tests = getTestByTestName(testName);
+        if (tests.isEmpty()){
+            insert(testName);
+        }else {
+            System.out.println("test is already in db");
+        }
+        // yes , return
+        // no, add
+
+    }
+
+
+    public void insertTestResult(int test_id, int test_run, int result, String exec_time) {
+        String sql = "INSERT INTO testResult(test_id, test_run, result, exec_time) VALUES(?,?,?,?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, test_id);
+            pstmt.setInt(2, test_run);
+            pstmt.setInt(3, result);
+            pstmt.setString(4, exec_time);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void addTestResult(String test_name, int result, String time) {
+        List<TestDb> tests = getTestByTestName(test_name);
+        for (TestDb test : tests){
+            int test_id = test.getId();
+            List<TestResultDb> testResults = getAllTestResultsById(test_id);
+            int test_run = testResults.size();
+            System.out.println(test_run);
+            insertTestResult(test_id, test_run+1, result, time);
+        }
+    }
 }

@@ -3,6 +3,7 @@ package pluginCommunicationHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.psi.*;
+import database.DbController;
 import ide.CodeChangeListener;
 import ide.PsiHandler;
 import opencloverController.cloverApiRunner;
@@ -35,10 +36,13 @@ public class StartUpActivity implements StartupActivity {
         //test all methods in tests
         PsiHandler psiHandler = new PsiHandler();
 
+        DbController db_controller = new DbController();
 
         List<PsiMethod> methods = psiHandler.getAllTests(project);
 
         for (PsiMethod testMethod : methods) {
+            // check if test is in db
+            db_controller.addTestToDb(testMethod.getName());
             HashSet<PsiMethod> a = psiHandler.traverseBodyToFindAllMethodUsages(testMethod.getBody());
             Test test = new Test(testMethod, Objects.requireNonNull(testMethod.getContainingClass()), a);
             TestSingleton.getInstance().getTestClasses().put(test.getName(), test.getTest_class_name());
