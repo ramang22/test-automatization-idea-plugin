@@ -1,6 +1,5 @@
 package ide;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTreeChangeEvent;
@@ -78,19 +77,22 @@ public class CodeChangeHandlers {
     }
 
     private void checkTimer(){
-        if (PluginSingleton.getInstance().isTimerWorking()){
-            // stop timer and start again
-            PluginSingleton.getInstance().getTimer().cancel();
-            PluginSingleton.getInstance().setTimer(new Timer());
-            SheduleNewTimer();
-        }else {
-            // start timer
-            PluginSingleton.getInstance().setTimerWorking(true);
-            SheduleNewTimer();
+        if (!PluginSingleton.getInstance().isTestExecution()){
+            if (PluginSingleton.getInstance().isTimerWorking()){
+                // stop timer and start again
+                PluginSingleton.getInstance().getTimer().cancel();
+                PluginSingleton.getInstance().setTimer(new Timer());
+                ScheduleNewTimer();
+            }else {
+                // start timer
+                PluginSingleton.getInstance().setTimerWorking(true);
+                ScheduleNewTimer();
+            }
         }
     }
 
-    private void SheduleNewTimer() {
+    private void ScheduleNewTimer() {
+        PluginSingleton.getInstance().setTestExecution(true);
         PluginSingleton.getInstance().getTimer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -101,6 +103,7 @@ public class CodeChangeHandlers {
                     e.printStackTrace();
                 }
                 PluginSingleton.getInstance().setTimerWorking(false);
+                PluginSingleton.getInstance().setTestExecution(false);
             }
         }, PluginSingleton.TIMER_DELAY*1000);
     }

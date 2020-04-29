@@ -19,6 +19,7 @@ public class PluginSingleton {
     private HashSet<String> package_file_paths;
     private Timer timer;
     private boolean timerWorking;
+    private boolean testExecution;
     Tester tester;
 
 
@@ -32,6 +33,7 @@ public class PluginSingleton {
         this.package_file_paths = new HashSet<>();
         this.timer = new Timer();
         this.timerWorking = false;
+        this.testExecution = false;
     }
 
     public static PluginSingleton getInstance()
@@ -115,5 +117,13 @@ public class PluginSingleton {
 
     public void setTimer(Timer timer) {
         this.timer = timer;
+    }
+
+    public boolean isTestExecution() {
+        return testExecution;
+    }
+
+    public void setTestExecution(boolean testExecution) {
+        this.testExecution = testExecution;
     }
 }
