@@ -1,5 +1,7 @@
 package pluginResources;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import ide.Tester;
 
@@ -43,6 +45,12 @@ public class PluginSingleton {
         }
         return INSTANCE;
     }
+
+    public static void safeAllFiles() {
+        ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication()
+                .runWriteAction(() -> FileDocumentManager.getInstance().saveAllDocuments()));
+    }
+
 
     public Project getProject() {
         return project;

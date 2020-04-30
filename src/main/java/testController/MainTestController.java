@@ -63,7 +63,7 @@ public class MainTestController {
     }
 
     public void runAllTests() throws InterruptedException {
-
+        PluginSingleton.safeAllFiles();
         CodeHighlighter.removeOldHighlights();
 
         //copy event map into new map for execution
