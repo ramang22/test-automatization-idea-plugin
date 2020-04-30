@@ -1,5 +1,6 @@
 package pluginCommunicationHandler;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -9,9 +10,11 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.uiDesigner.core.AbstractLayout;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
+import highlighter.CustomIcons;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.xml.sax.SAXException;
+import pluginResources.PluginSingleton;
 import testController.MainTestController;
 
 import javax.swing.*;
@@ -26,7 +29,7 @@ public class SettingWrapper extends DialogWrapper {
 
     JPanel panel = new JPanel(new GridBagLayout());
     JTextField input = new JTextField();
-    JButton fdButton = new JButton("Set");
+    JButton fdButton = new JButton("Select Root Folder");
     Project project = null;
 
     protected SettingWrapper(@Nullable Project project, boolean canBeParent) {
@@ -40,7 +43,8 @@ public class SettingWrapper extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-
+        fdButton.setMaximumSize(new Dimension(40, 40));
+        fdButton.setIcon(AllIcons.Actions.NewFolder);
         fdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 FileChooserDescriptor fd = new FileChooserDescriptor(
@@ -50,16 +54,11 @@ public class SettingWrapper extends DialogWrapper {
                         false,
                         false,
                         false);
-                fd.setTitle("Select Test Folder");
-                fd.setDescription("Selector for Tests Folder");
+                fd.setTitle("Select Project Folder");
+                fd.setDescription("Please select project folder");
                 FileChooser.chooseFile(fd,project,null, virtualFile -> {
-                    MainTestController main = new MainTestController();
-                    try {
-                        main.runAllTests();
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                    Messages.showMessageDialog(project,virtualFile.getPath(),"Path",Messages.getInformationIcon());
+                    PluginSingleton.getInstance().setProjectRootFolderPath(virtualFile.getPath()+"/");
+                    Messages.showMessageDialog(project,"Root folder path : "+virtualFile.getPath(),"Project Root Folder",Messages.getInformationIcon());
                 });
             }
         });
@@ -67,10 +66,10 @@ public class SettingWrapper extends DialogWrapper {
                 .setDefaultInsets(JBUI.insets(0, 0, AbstractLayout.DEFAULT_VGAP, AbstractLayout.DEFAULT_HGAP))
                 .setDefaultWeightX(1.0)
                 .setDefaultFill(GridBagConstraints.HORIZONTAL);
-
-        panel.setPreferredSize(new Dimension(400,200));
-        panel.add(label("mode"),bag.nextLine().next().weightx(0.2));
-        panel.add(input,bag.nextLine().next().weightx(0.2));
+        JLabel plugText = new JLabel();
+        plugText.setText("Plugin environment settings :");
+        panel.setPreferredSize(new Dimension(300,150));
+        panel.add(plugText,bag.nextLine().next().weightx(0.2));
         panel.add(fdButton,bag.nextLine().next().weightx(0.2));
         return panel;
     }

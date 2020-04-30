@@ -110,7 +110,6 @@ public class PsiHandler {
                 HashSet<String> newList = new HashSet<String>(map.get(lineNum + 1));
                 TestSingleton.getInstance().getPsiElementToTests().put(elemParent, newList);
             }
-            System.out.println("Adding parent element  : " + elem.getText() + " ,Hash code : " + elem.hashCode());
         }
 
     }
@@ -134,7 +133,6 @@ public class PsiHandler {
                     TestSingleton.getInstance().getPsiElementToTests().put(elem, newList);
                     addParentElement(elem, map, lineNum);
                 }
-                System.out.println("Adding element  : " + elem.getText() + " ,Hash code : " + elem.hashCode());
                 for (String testName : map.get(lineNum + 1)) {
                     if (TestSingleton.getInstance().getTestToPsiElements().containsKey(testName)) {
                         TestSingleton.getInstance().getTestToPsiElements().get(testName).add(elem);

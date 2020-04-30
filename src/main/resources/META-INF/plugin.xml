@@ -24,12 +24,10 @@
 
     <actions>
         <!-- Add your actions here -->
-        <group id="mainScreen" text="Tester Plugin" description="Main window of plugin" >
+        <group id="mainScreen" text="Tester" description="Main window of plugin" >
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action class="pluginCommunicationHandler.RunTestButton" id="runtest" text="Run Tests" icon="/META-INF/logo24x24.png"/>
-            <action class="pluginCommunicationHandler.RunCoverageButton" id="runcoverage" text="Run Coverage" icon="/META-INF/logo24x24.png"/>
-            <action class="pluginCommunicationHandler.SelectTestsFolderButton" id="selectTestFolder" text="Select tests folder"/>
-            <action class="pluginCommunicationHandler.PluginSettings" id="pluginSettings" text="Settings"/>
+            <action class="pluginCommunicationHandler.RunCoverageButton" id="runcoverage" text="Run Coverage" icon="/META-INF/logo20x20.png"/>
+<!--            <action class="pluginCommunicationHandler.PluginSettings" id="pluginSettings" text="Settings" icon="/META-INF/settings20x20.png"/>-->
         </group>
 
 

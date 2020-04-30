@@ -6,14 +6,6 @@ import java.util.List;
 
 public class DbController {
 
-
-    //        DbController.insert("Test_add", 1);
-//        for (TestDb test : Objects.requireNonNull(DbController.getTestByTestName("Test_add"))){
-//            System.out.println("Updating tests");
-//            DbController.update(test.getId(), test.getName(), 0 );
-//            test.printSelf();
-//        }
-
     private Connection connect() {
         Connection conn = null;
         try {
@@ -22,9 +14,6 @@ public class DbController {
             String url = "jdbc:sqlite:/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/src/database/test.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
-
-            System.out.println("Connection to SQLite has been established.");
-
         } catch (SQLException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
         }
@@ -38,7 +27,6 @@ public class DbController {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, name);
             pstmt.executeUpdate();
-            System.out.println("New test inserted");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -81,7 +69,6 @@ public class DbController {
             pstmt.setInt(3, id);
             // update
             pstmt.executeUpdate();
-            System.out.println("Test updated");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -120,17 +107,12 @@ public class DbController {
         return null;
     }
 
-    public void addTestToDb(String testName){
+    public void addTestToDb(String testName) {
         // check if is test in db
         List<TestDb> tests = getTestByTestName(testName);
-        if (tests.isEmpty()){
+        if (tests.isEmpty()) {
             insert(testName);
-        }else {
-            System.out.println("test is already in db");
         }
-        // yes , return
-        // no, add
-
     }
 
 
@@ -151,19 +133,18 @@ public class DbController {
 
     public void addTestResult(String test_name, int result, String time) {
         List<TestDb> tests = getTestByTestName(test_name);
-        for (TestDb test : tests){
+        for (TestDb test : tests) {
             int test_id = test.getId();
             List<TestResultDb> testResults = getAllTestResultsById(test_id);
             int test_run = testResults.size();
-            System.out.println(test_run);
-            insertTestResult(test_id, test_run+1, result, time);
+            insertTestResult(test_id, test_run + 1, result, time);
         }
     }
 
-    public List<TestResultDb> getAllTestResultsByName(String test_name){
+    public List<TestResultDb> getAllTestResultsByName(String test_name) {
         List<TestDb> tests = getTestByTestName(test_name);
         List<TestResultDb> resultsForTest = new ArrayList<>();
-        for (TestDb test : tests){
+        for (TestDb test : tests) {
             resultsForTest.addAll(getAllTestResultsById(test.getId()));
         }
         return resultsForTest;

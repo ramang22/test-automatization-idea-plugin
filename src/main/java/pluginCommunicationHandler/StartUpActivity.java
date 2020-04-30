@@ -32,7 +32,7 @@ public class StartUpActivity implements StartupActivity {
 
         //set project variables
         PluginSingleton.getInstance().setProject(project);
-        PluginSingleton.getInstance().setProjectRootFolderPath("/Users/ramang/Documents/Developer/tests-project-for-plugin/");
+        PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath()+"/");
         //test all methods in tests
         PsiHandler psiHandler = new PsiHandler();
 
