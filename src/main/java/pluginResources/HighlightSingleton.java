@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import highlighter.HighlightedLane;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class HighlightSingleton {
@@ -13,17 +14,16 @@ public class HighlightSingleton {
     private List<HighlightedLane> highlighted_lanes;
     private List<HighlightedLane> highlighted_lanes_with_gutter;
     private List<PsiElement> methodsHeaders;
+    private HashSet<String> tests_to_highlight;
 
-
-    private HighlightSingleton()
-    {
+    private HighlightSingleton() {
         this.highlighted_lanes = new ArrayList<>();
         this.highlighted_lanes_with_gutter = new ArrayList<>();
         this.methodsHeaders = new ArrayList<>();
+        this.tests_to_highlight = new HashSet<>();
     }
 
-    public static HighlightSingleton getInstance()
-    {
+    public static HighlightSingleton getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new HighlightSingleton();
         }
@@ -52,5 +52,13 @@ public class HighlightSingleton {
 
     public void setHighlighted_lanes(List<HighlightedLane> highlighted_lanes) {
         this.highlighted_lanes = highlighted_lanes;
+    }
+
+    public HashSet<String> getTests_to_highlight() {
+        return tests_to_highlight;
+    }
+
+    public void setTests_to_highlight(HashSet<String> tests_to_highlight) {
+        this.tests_to_highlight = tests_to_highlight;
     }
 }

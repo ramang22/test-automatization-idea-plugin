@@ -47,8 +47,8 @@ public class PluginSingleton {
     }
 
     public static void safeAllFiles() {
-        ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication()
-                .runWriteAction(() -> FileDocumentManager.getInstance().saveAllDocuments()));
+        new Thread(() -> ApplicationManager.getApplication()
+                .runWriteAction(() -> FileDocumentManager.getInstance().saveAllDocuments())).start();
     }
 
 

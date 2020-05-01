@@ -2,6 +2,8 @@ package mavenRunner;
 
 import database.DbController;
 import highlighter.CodeHighlighter;
+import pluginResources.HighlightSingleton;
+
 import java.io.*;
 
 public class testRunner {
@@ -25,7 +27,8 @@ public class testRunner {
         String time = runner.getExecTime(output);
         if (output.contains("BUILD FAILURE")) {
             db_controller.addTestResult(test_name,0,time);
-            CodeHighlighter.highlightTest(test_name, false);
+            HighlightSingleton.getInstance().getTests_to_highlight().add(test_name);
+            //CodeHighlighter.highlightTest(test_name, false);
             System.out.println("Test failure");
         } else {
 

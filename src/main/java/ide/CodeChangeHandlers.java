@@ -1,5 +1,7 @@
 package ide;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTreeChangeEvent;
@@ -7,9 +9,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
+import test.Event;
 import testController.MainTestController;
 
+import javax.swing.*;
 import java.util.*;
+import java.util.Timer;
 
 public class CodeChangeHandlers {
 
@@ -49,23 +54,49 @@ public class CodeChangeHandlers {
     }
 
     public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent, PsiElement element, PsiElement inMap) {
+        // check if event is in method not outside
         if (this.checkIfEventIsInMethods(psiTreeChangeEvent)) {
+            //check if parent element in new or element changed element is in nap
             if (TestSingleton.getInstance().getPsiElementToTests().containsKey(inMap)) {
-                //add tests to queue
+                // get all tests mapped for element
                 HashSet<String> testNames = new HashSet<>(TestSingleton.getInstance().getPsiElementToTests().get(inMap));
                 // add event to events for highlights
+                TestSingleton.getInstance().getTestsForExecution().addAll(testNames);
+
+                //add event to test method
                 for (String name : testNames) {
-                    TestSingleton.getInstance().getTestsForExecution().add(name);
-                    if (TestSingleton.getInstance().getTestMethod_event().containsKey(name)) {
-                        TestSingleton.getInstance().getTestMethod_event().get(name).add(element);
-                    } else {
-                        List<PsiElement> newList = new ArrayList<>();
-                        newList.add(element);
-                        TestSingleton.getInstance().getTestMethod_event().put(name, newList);
-                    }
+//                    if (TestSingleton.getInstance().getTestMethod_event().containsKey(name)) {
+//                        TestSingleton.getInstance().getTestMethod_event().get(name).add(element);
+//                    } else {
+//                        List<PsiElement> newList = new ArrayList<>();
+//                        newList.add(element);
+//                        TestSingleton.getInstance().getTestMethod_event().put(name, newList);
+//                    }
+                    addCustomElement(element,inMap,name);
+                }
+
+                //if new element add it to map
+                if (!TestSingleton.getInstance().getPsiElementToTests().containsKey(element)){
+                    TestSingleton.getInstance().getPsiElementToTests().put(element,testNames);
                 }
 
             }
+        }
+    }
+
+    private void addCustomElement(PsiElement element, PsiElement parentElement, String test_name) {
+        PsiMethod parentMethod = element instanceof PsiMethod ?
+                (PsiMethod) element : PsiTreeUtil.getTopmostParentOfType(element, PsiMethod.class);
+        Document document = FileDocumentManager.getInstance().getDocument(parentElement.getContainingFile().getVirtualFile());
+        int lineNum = document.getLineNumber(element.getTextOffset());
+        Event newEvent = new Event(element, parentElement, parentMethod,document, lineNum);
+
+        if (TestSingleton.getInstance().getTestMethod_CustomEvent().containsKey(test_name)){
+            TestSingleton.getInstance().getTestMethod_CustomEvent().get(test_name).add(newEvent);
+        }else {
+            List<Event> newList = new ArrayList<>();
+            newList.add(newEvent);
+            TestSingleton.getInstance().getTestMethod_CustomEvent().put(test_name, newList);
         }
     }
 
@@ -76,36 +107,43 @@ public class CodeChangeHandlers {
         return parentMethod != null;
     }
 
-    private void checkTimer(){
-        if (!PluginSingleton.getInstance().isTestExecution()){
-            if (PluginSingleton.getInstance().isTimerWorking()){
+    private void checkTimer() {
+        System.out.println(PluginSingleton.getInstance().isTestExecution());
+        if (!PluginSingleton.getInstance().isTestExecution()) {
+            if (PluginSingleton.getInstance().isTimerWorking()) {
                 // stop timer and start again
                 PluginSingleton.getInstance().getTimer().cancel();
                 PluginSingleton.getInstance().setTimer(new Timer());
                 ScheduleNewTimer();
-            }else {
+            } else {
                 // start timer
                 PluginSingleton.getInstance().setTimerWorking(true);
                 ScheduleNewTimer();
             }
+        }else{
+            System.out.println("Plugin pracuje nemozem nastavit timer");
         }
     }
 
     private void ScheduleNewTimer() {
-        PluginSingleton.getInstance().setTestExecution(true);
         PluginSingleton.getInstance().getTimer().schedule(new TimerTask() {
             @Override
             public void run() {
-
+                PluginSingleton.getInstance().setTestExecution(true);
                 try {
                     testStater.runAllTests();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                PluginSingleton.getInstance().setTimerWorking(false);
-                PluginSingleton.getInstance().setTestExecution(false);
+                SwingUtilities.invokeLater(() -> {
+                        testStater.runHiglighter();
+                        PluginSingleton.getInstance().setTimerWorking(false);
+                        PluginSingleton.getInstance().setTestExecution(false);
+
+                });
+
             }
-        }, PluginSingleton.TIMER_DELAY*1000);
+        }, PluginSingleton.TIMER_DELAY * 1000);
     }
 
     public void handlerBeforeChildReplacement(PsiTreeChangeEvent psiTreeChangeEvent) {
@@ -115,7 +153,7 @@ public class CodeChangeHandlers {
         // TODO Extract element parent
         this.checkTimer();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
-        this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
+        this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
 
     public void handlerBeforeChildMovement(PsiTreeChangeEvent psiTreeChangeEvent) {
@@ -139,7 +177,7 @@ public class CodeChangeHandlers {
         // TODO handle element parent
         this.checkTimer();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
-        this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
+        this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
 
     public void handlerBeforeChildAddition(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
@@ -153,13 +191,13 @@ public class CodeChangeHandlers {
         //        } ,hashCode : 1371802751
         // TODO handle parent
         PsiElement element_parent = psiTreeChangeEvent.getParent();
-        this.handleCodeChange(psiTreeChangeEvent,element_parent,element_parent);
+        this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
 
     public void handlerChildAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         this.checkTimer();
         PsiElement element_child = psiTreeChangeEvent.getChild();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
-        this.handleCodeChange(psiTreeChangeEvent,element_child,element_parent);
+        this.handleCodeChange(psiTreeChangeEvent, element_child, element_parent);
     }
 }

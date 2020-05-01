@@ -11,11 +11,13 @@ import mavenRunner.cloverRunner;
 import opencloverController.cloverParser;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
+import pluginResources.HighlightSingleton;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 import test.Test;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
