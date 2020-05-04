@@ -122,6 +122,9 @@ public class PsiHandler {
         for (PsiElement child : elem.getChildren()) {
             this.mapElementToTest(child, map);
             Document document = FileDocumentManager.getInstance().getDocument(elem.getContainingFile().getVirtualFile());
+            if (elem.getTextOffset() == -1){
+                continue;
+            }
             int lineNum = document.getLineNumber(elem.getTextOffset());
             if (map.containsKey(lineNum + 1)) {
 

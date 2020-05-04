@@ -11,7 +11,9 @@ public class DbController {
         try {
             // db parameters
             Class.forName("org.sqlite.JDBC");
-            String url = "jdbc:sqlite:/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/src/database/test.db";
+            // TODO find how auto import this
+            String path = "/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/";
+            String url = "jdbc:sqlite:"+path+"src/database/test.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {

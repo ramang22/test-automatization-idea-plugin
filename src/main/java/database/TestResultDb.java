@@ -14,6 +14,9 @@ public class TestResultDb {
         this.test_id = test_id;
         this.test_name = test_name;
         this.result = result;
+        if (exec_time == "" || exec_time == " "){
+            this.exec_time = "0";
+        }
         this.exec_time = exec_time;
     }
 

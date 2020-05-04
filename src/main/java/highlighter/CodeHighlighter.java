@@ -93,7 +93,7 @@ public class CodeHighlighter {
 
     private static void highLightLine(@NotNull Event event) {
         Document document = event.getDocument();
-        int lineNum = event.getLineNumber();
+        int lineNum = document.getLineNumber(event.getElement().getTextOffset());
         saveHighlight(document, lineNum, false);
 
         MarkupModel markupModel = getMarkupModel(document);
@@ -104,7 +104,8 @@ public class CodeHighlighter {
 
     private static void highLightLineWithGutter(@NotNull Event element, String toolTipText) {
         saveHighlight(element.getDocument(), element.getParentMethodLineNumber(), true);
-        addLineHighlight(element.getDocument(), element.getParentMethodLineNumber(), toolTipText);
+        int lineNum = element.getDocument().getLineNumber(element.getParentMethod().getTextOffset());
+        addLineHighlight(element.getDocument(), lineNum, toolTipText);
     }
 
     private static void removeLineHighlight(Document document, int lineNumber) {
@@ -143,15 +144,17 @@ public class CodeHighlighter {
     public static void highlightTest(String test_name, Boolean test_passed, String tooltip) {
         List<Event> events = TestSingleton.getInstance().getTestMethod_CustomEvent_forExecution().get(test_name);
         HashSet<String> methods = new HashSet<>();
-        for (Event event : events) {
-            highLightLine(event);
-        }
+        if (events != null || events.isEmpty()){
+            for (Event event : events) {
+                highLightLine(event);
+            }
 
-        // hightlight parent methods with gutter
-        for (Event method : events) {
-            if (!methods.contains(method.getParentMethod().getName())){
-                highLightLineWithGutter(method, tooltip);
-                methods.add(method.getParentMethod().getName());
+            // hightlight parent methods with gutter
+            for (Event method : events) {
+                if (!methods.contains(method.getParentMethod().getName())){
+                    highLightLineWithGutter(method, tooltip);
+                    methods.add(method.getParentMethod().getName());
+                }
             }
         }
 

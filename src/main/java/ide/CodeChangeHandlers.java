@@ -54,6 +54,7 @@ public class CodeChangeHandlers {
     }
 
     public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent, PsiElement element, PsiElement inMap) {
+        // TODO check if is method in test
         // check if event is in method not outside
         if (this.checkIfEventIsInMethods(psiTreeChangeEvent)) {
             //check if parent element in new or element changed element is in nap
@@ -65,13 +66,6 @@ public class CodeChangeHandlers {
 
                 //add event to test method
                 for (String name : testNames) {
-//                    if (TestSingleton.getInstance().getTestMethod_event().containsKey(name)) {
-//                        TestSingleton.getInstance().getTestMethod_event().get(name).add(element);
-//                    } else {
-//                        List<PsiElement> newList = new ArrayList<>();
-//                        newList.add(element);
-//                        TestSingleton.getInstance().getTestMethod_event().put(name, newList);
-//                    }
                     addCustomElement(element,inMap,name);
                 }
 
@@ -108,7 +102,6 @@ public class CodeChangeHandlers {
     }
 
     private void checkTimer() {
-        System.out.println(PluginSingleton.getInstance().isTestExecution());
         if (!PluginSingleton.getInstance().isTestExecution()) {
             if (PluginSingleton.getInstance().isTimerWorking()) {
                 // stop timer and start again
@@ -120,8 +113,6 @@ public class CodeChangeHandlers {
                 PluginSingleton.getInstance().setTimerWorking(true);
                 ScheduleNewTimer();
             }
-        }else{
-            System.out.println("Plugin pracuje nemozem nastavit timer");
         }
     }
 
