@@ -136,7 +136,7 @@ public class CodeChangeHandlers {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(() -> {
-                        testStater.runHiglighter();
+                        testStater.runHighlighter();
                         PluginSingleton.getInstance().setTimerWorking(false);
                         PluginSingleton.getInstance().setTestExecution(false);
 

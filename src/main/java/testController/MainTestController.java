@@ -87,7 +87,10 @@ public class MainTestController {
             for (i = 0; i < results.size(); i++) {
                 exec_value += (float) (results.get(i).getResult()) / (i + 1);
             }
-            double exec_time = Double.parseDouble(results.get(0).getExec_time());
+            double exec_time = 999;
+            if (results.size() != 0){
+                exec_time = Double.parseDouble(results.get(0).getExec_time());
+            }
             priorityQue.add(new PrioritizationValuator(test_name, exec_value, exec_time));
 
         }
@@ -103,11 +106,9 @@ public class MainTestController {
         }
 
 
-
-
     }
 
-    public void runHiglighter() {
+    public void runHighlighter() {
         StringBuilder toolTipText = new StringBuilder();
         toolTipText.append("Failed tests :\n");
         for (String x : HighlightSingleton.getInstance().getTests_to_highlight()){
