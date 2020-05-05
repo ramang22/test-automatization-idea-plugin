@@ -1,5 +1,8 @@
 package database;
 
+import pluginResources.PluginSingleton;
+
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +15,8 @@ public class DbController {
             // db parameters
             Class.forName("org.sqlite.JDBC");
             // TODO find how auto import this
-            String path = "/Users/ramang/Documents/Developer/IntelliJ-IDEA-test-run-plugin/";
-            String url = "jdbc:sqlite:"+path+"src/database/test.db";
+            String path = PluginSingleton.getInstance().getProjectRootFolderPath() + "TestPlugin/database/test.db";
+            String url = "jdbc:sqlite:" + path;
             // create a connection to the database
             conn = DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
@@ -150,5 +153,27 @@ public class DbController {
             resultsForTest.addAll(getAllTestResultsById(test.getId()));
         }
         return resultsForTest;
+    }
+
+    public void checkIfDbExists() throws ClassNotFoundException, SQLException {
+        String dbUrl = PluginSingleton.getInstance().getProjectRootFolderPath() + "TestPlugin/database/test.db";
+        File f = new File(dbUrl);
+        if (!f.exists()) {
+            new File(PluginSingleton.getInstance().getProjectRootFolderPath() + "TestPlugin/database").mkdirs();
+            Class.forName("org.sqlite.JDBC");
+            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbUrl)) {
+                if (conn != null) {
+                    System.out.println("A new database has been created.");
+                    Statement stmt = conn.createStatement();
+                    String sql = "CREATE TABLE \"testResult\" ( \"id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"test_id\" INTEGER, \"result\" INTEGER, \"exec_time\" TEXT, \"test_run\" INTEGER )";
+                    stmt.executeUpdate(sql);
+                    stmt = conn.createStatement();
+                    sql = "CREATE TABLE \"Test\" ( \"id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"Name\" TEXT )";
+                    stmt.executeUpdate(sql);
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }

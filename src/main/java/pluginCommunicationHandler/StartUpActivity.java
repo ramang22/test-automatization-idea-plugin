@@ -17,6 +17,7 @@ import pluginResources.TestSingleton;
 import test.Test;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,15 +32,19 @@ public class StartUpActivity implements StartupActivity {
         //setup code change listener
         PsiManager psiManager = PsiManager.getInstance(project);
         psiManager.addPsiTreeChangeListener(new CodeChangeListener());
-
         //set project variables
         PluginSingleton.getInstance().setProject(project);
-        PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath()+"/");
+        PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath() + "/");
         //test all methods in tests
         PsiHandler psiHandler = new PsiHandler();
 
         DbController db_controller = new DbController();
 
+        try {
+            db_controller.checkIfDbExists();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
         List<PsiMethod> methods = psiHandler.getAllTests(project);
 
         for (PsiMethod testMethod : methods) {
@@ -85,10 +90,7 @@ public class StartUpActivity implements StartupActivity {
             if (TestSingleton.getInstance().getCoverageByClass().containsKey(c.getName())) {
                 // if y, get all elements on line of code
                 psiHandler.mapLinesToTests(c, TestSingleton.getInstance().getCoverageByClass().get(c.getName()));
-            } else {
-                continue;
             }
-
         }
     }
 

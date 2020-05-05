@@ -3,24 +3,38 @@ package mavenRunner;
 import database.DbController;
 import highlighter.CodeHighlighter;
 import pluginResources.HighlightSingleton;
+import pluginResources.PluginSingleton;
 
 import java.io.*;
 
 public class testRunner {
 
     public static void runTest(String className, String test_name) throws InterruptedException {
-        String pomPath = "/Users/ramang/Documents/Developer/tests-project-for-plugin/pom.xml";
+        String pomPath = PluginSingleton.getInstance().getPomPath();
         String testToRun = "-Dtest="+ className+"#"+test_name;
         Process process;
         System.out.println(String.format("Running test : %s", test_name));
-        try {
-            String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "test", testToRun};
-            process = Runtime.getRuntime().exec(exec_cmd);
-        } catch (IOException e) {
-            e.printStackTrace();
-            process = null;
+        if (System.getProperty("os.name").equals("Mac OS X")){
+            try {
+                // TODO windows run too
+                String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "test", testToRun};
+                process = Runtime.getRuntime().exec(exec_cmd);
+            } catch (IOException e) {
+                e.printStackTrace();
+                process = null;
+            }
+            int result = process.waitFor();
+        }else {
+            try {
+                // TODO windows run too
+                String[] exec_cmd = new String[]{"cmd.exe","/c","mvn", "-f", pomPath, "test", testToRun};
+                process = Runtime.getRuntime().exec(exec_cmd);
+            } catch (IOException e) {
+                e.printStackTrace();
+                process = null;
+            }
+//            int result = process.waitFor();
         }
-        int result = process.waitFor();
         String output = CustomRunner.getStdInput(process);
         DbController db_controller = new DbController();
         testRunner runner = new testRunner();
