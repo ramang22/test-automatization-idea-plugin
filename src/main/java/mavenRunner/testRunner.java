@@ -16,7 +16,6 @@ public class testRunner {
         System.out.println(String.format("Running test : %s", test_name));
         if (System.getProperty("os.name").equals("Mac OS X")){
             try {
-                // TODO windows run too
                 String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "test", testToRun};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
@@ -26,7 +25,6 @@ public class testRunner {
             int result = process.waitFor();
         }else {
             try {
-                // TODO windows run too
                 String[] exec_cmd = new String[]{"cmd.exe","/c","mvn", "-f", pomPath, "test", testToRun};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {

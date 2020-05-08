@@ -25,6 +25,8 @@ dependencies {
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     // https://mvnrepository.com/artifact/org.json/json
     compile group: 'org.json', name: 'json', version: '20090211'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+
 }
 
 test {

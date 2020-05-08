@@ -6,6 +6,7 @@ import com.intellij.psi.*;
 import database.DbController;
 import ide.CodeChangeListener;
 import ide.PsiHandler;
+import logger.PluginLogger;
 import opencloverController.cloverApiRunner;
 import mavenRunner.cloverRunner;
 import opencloverController.cloverParser;
@@ -15,8 +16,9 @@ import pluginResources.HighlightSingleton;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 import test.Test;
+import org.apache.log4j.Logger;
 
-
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,11 +26,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class StartUpActivity implements StartupActivity {
+
+    final PluginLogger logger = new PluginLogger(StartUpActivity.class);
+
     public StartUpActivity() {
     }
 
     @Override
     public void runActivity(@NotNull Project project) {
+
         //setup code change listener
         PsiManager psiManager = PsiManager.getInstance(project);
         psiManager.addPsiTreeChangeListener(new CodeChangeListener());
@@ -36,6 +42,7 @@ public class StartUpActivity implements StartupActivity {
         PluginSingleton.getInstance().setProject(project);
         PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath() + "/");
         //test all methods in tests
+        logger.log(PluginLogger.Level.INFO,"kokotina");
         PsiHandler psiHandler = new PsiHandler();
 
         DbController db_controller = new DbController();
