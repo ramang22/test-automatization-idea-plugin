@@ -11,18 +11,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import logger.PluginLogger;
 import org.json.*;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 
 public class cloverParser {
 
+    static final PluginLogger logger = new PluginLogger(cloverParser.class);
+
     private String readWholeFile(String filepath) {
         StringBuilder contentBuilder = new StringBuilder();
         try (Stream<String> stream = Files.lines(Paths.get(filepath), StandardCharsets.UTF_8)) {
             stream.forEach(s -> contentBuilder.append(s).append("\n"));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         return contentBuilder.toString();
     }
@@ -59,7 +62,7 @@ public class cloverParser {
             } else {
                 HashSet<String> newList = new HashSet<String>();
                 newList.add(test_id_test_name.get(Integer.parseInt(test_id)));
-                test_lines.put(line_num,newList);
+                test_lines.put(line_num, newList);
             }
         }
     }
@@ -98,11 +101,11 @@ public class cloverParser {
         // get 1. property clover.testTargets
         HashMap<Integer, String> test_id_test_name = this.getTestTargets(file_content_string);
         // get 2. property clover.srcFileLines
-        if (test_id_test_name != null){
+        if (test_id_test_name != null) {
             HashMap<Integer, HashSet<String>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
-            TestSingleton.getInstance().getCoverageByClass().put(className,testCoverageByLine);
-        }else{
-            System.out.println("V "+className+" som nenasiel ziadny coverage.");
+            TestSingleton.getInstance().getCoverageByClass().put(className, testCoverageByLine);
+        } else {
+            logger.log(PluginLogger.Level.INFO, "For " + className + " no coverage found.");
         }
 
     }
@@ -120,8 +123,8 @@ public class cloverParser {
             //check if file exists in clover report
             File tempFile = new File(htmlReportPath + path);
             if (tempFile.exists()) {
-                System.out.println(path);
-                parser.getTestCoverageInClass(htmlReportPath + path,path.split("/")[1].split("\\.")[0]);
+                logger.log(PluginLogger.Level.INFO, "Coverage for : "+path);
+                parser.getTestCoverageInClass(htmlReportPath + path, path.split("/")[1].split("\\.")[0]);
 
             }
         }

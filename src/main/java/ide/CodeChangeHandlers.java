@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.util.PsiTreeUtil;
+import logger.PluginLogger;
 import org.jetbrains.annotations.NotNull;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
@@ -19,6 +20,7 @@ import java.util.Timer;
 public class CodeChangeHandlers {
 
     public static MainTestController testStater = new MainTestController();
+    private final PluginLogger logger = new PluginLogger(CodeChangeHandlers.class);
 
     public void printEventElements(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
 
@@ -66,12 +68,12 @@ public class CodeChangeHandlers {
 
                 //add event to test method
                 for (String name : testNames) {
-                    addCustomElement(element,inMap,name);
+                    addCustomElement(element, inMap, name);
                 }
 
                 //if new element add it to map
-                if (!TestSingleton.getInstance().getPsiElementToTests().containsKey(element)){
-                    TestSingleton.getInstance().getPsiElementToTests().put(element,testNames);
+                if (!TestSingleton.getInstance().getPsiElementToTests().containsKey(element)) {
+                    TestSingleton.getInstance().getPsiElementToTests().put(element, testNames);
                 }
 
             }
@@ -83,11 +85,11 @@ public class CodeChangeHandlers {
                 (PsiMethod) element : PsiTreeUtil.getTopmostParentOfType(element, PsiMethod.class);
         Document document = FileDocumentManager.getInstance().getDocument(parentElement.getContainingFile().getVirtualFile());
         int lineNum = document.getLineNumber(element.getTextOffset());
-        Event newEvent = new Event(element, parentElement, parentMethod,document, lineNum);
+        Event newEvent = new Event(element, parentElement, parentMethod, document, lineNum);
 
-        if (TestSingleton.getInstance().getTestMethod_CustomEvent().containsKey(test_name)){
+        if (TestSingleton.getInstance().getTestMethod_CustomEvent().containsKey(test_name)) {
             TestSingleton.getInstance().getTestMethod_CustomEvent().get(test_name).add(newEvent);
-        }else {
+        } else {
             List<Event> newList = new ArrayList<>();
             newList.add(newEvent);
             TestSingleton.getInstance().getTestMethod_CustomEvent().put(test_name, newList);
@@ -120,17 +122,18 @@ public class CodeChangeHandlers {
         PluginSingleton.getInstance().getTimer().schedule(new TimerTask() {
             @Override
             public void run() {
+                logger.log(PluginLogger.Level.INFO, "Starting test sequence.");
                 PluginSingleton.getInstance().setTestExecution(true);
                 try {
                     testStater.runAllTests();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.log(PluginLogger.Level.ERROR, e.getMessage());
                 }
                 SwingUtilities.invokeLater(() -> {
-                        testStater.runHighlighter();
-                        PluginSingleton.getInstance().setTimerWorking(false);
-                        PluginSingleton.getInstance().setTestExecution(false);
-
+                    testStater.runHighlighter();
+                    PluginSingleton.getInstance().setTimerWorking(false);
+                    PluginSingleton.getInstance().setTestExecution(false);
+                    logger.log(PluginLogger.Level.INFO, "Plug-in work done.");
                 });
 
             }

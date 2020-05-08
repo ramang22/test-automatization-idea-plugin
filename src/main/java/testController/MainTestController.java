@@ -7,6 +7,7 @@ import database.DbController;
 import database.TestResultDb;
 import highlighter.CodeHighlighter;
 import ide.PsiHandler;
+import logger.PluginLogger;
 import opencloverController.cloverParser;
 import org.json.JSONException;
 import pluginResources.HighlightSingleton;
@@ -21,6 +22,7 @@ import java.util.*;
 
 public class MainTestController {
 
+    private final PluginLogger logger = new PluginLogger(MainTestController.class);
 
     public void runCoverage() {
 
@@ -88,7 +90,7 @@ public class MainTestController {
                 exec_value += (float) (results.get(i).getResult()) / (i + 1);
             }
             double exec_time = 999;
-            if (results.size() != 0){
+            if (results.size() != 0) {
                 exec_time = Double.parseDouble(results.get(0).getExec_time());
             }
             priorityQue.add(new PrioritizationValuator(test_name, exec_value, exec_time));
@@ -100,8 +102,6 @@ public class MainTestController {
         // run all tests
         for (PrioritizationValuator test_method : priorityQue) {
             String className = TestSingleton.getInstance().getTestClasses().get(test_method.getTest_name());
-            System.out.println(className);
-            System.out.println(test_method.getHistoryValue());
             testRunner.runTest(className, test_method.getTest_name());
         }
 
@@ -111,15 +111,15 @@ public class MainTestController {
     public void runHighlighter() {
         StringBuilder toolTipText = new StringBuilder();
         toolTipText.append("Failed tests :\n");
-        for (String x : HighlightSingleton.getInstance().getTests_to_highlight()){
+        for (String x : HighlightSingleton.getInstance().getTests_to_highlight()) {
             toolTipText.append(x);
             toolTipText.append(" failed\n");
         }
 
         CodeHighlighter.removeOldHighlights();
 
-        for (String test_name : HighlightSingleton.getInstance().getTests_to_highlight()){
-            CodeHighlighter.highlightTest(test_name,false, toolTipText.toString());
+        for (String test_name : HighlightSingleton.getInstance().getTests_to_highlight()) {
+            CodeHighlighter.highlightTest(test_name, false, toolTipText.toString());
         }
         TestSingleton.getInstance().getTestMethod_CustomEvent_forExecution().clear();
         HighlightSingleton.getInstance().getTests_to_highlight().clear();

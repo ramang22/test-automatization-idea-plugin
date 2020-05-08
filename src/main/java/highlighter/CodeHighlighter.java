@@ -144,14 +144,14 @@ public class CodeHighlighter {
     public static void highlightTest(String test_name, Boolean test_passed, String tooltip) {
         List<Event> events = TestSingleton.getInstance().getTestMethod_CustomEvent_forExecution().get(test_name);
         HashSet<String> methods = new HashSet<>();
-        if (events != null && !events.isEmpty()){
+        if (events != null && !events.isEmpty()) {
             for (Event event : events) {
                 highLightLine(event);
             }
 
             // hightlight parent methods with gutter
             for (Event method : events) {
-                if (!methods.contains(method.getParentMethod().getName())){
+                if (!methods.contains(method.getParentMethod().getName())) {
                     highLightLineWithGutter(method, tooltip);
                     methods.add(method.getParentMethod().getName());
                 }

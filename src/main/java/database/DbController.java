@@ -1,5 +1,7 @@
 package database;
 
+import logger.PluginLogger;
+import pluginCommunicationHandler.StartUpActivity;
 import pluginResources.PluginSingleton;
 
 import java.io.File;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbController {
+
+    final PluginLogger logger = new PluginLogger(DbController.class);
 
     private Connection connect() {
         Connection conn = null;
@@ -20,7 +24,7 @@ public class DbController {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         return conn;
     }
@@ -33,7 +37,7 @@ public class DbController {
             pstmt.setString(1, name);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
     }
 
@@ -56,7 +60,7 @@ public class DbController {
             }
             return rs_tests;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         return null;
     }
@@ -75,7 +79,7 @@ public class DbController {
             // update
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
     }
 
@@ -107,7 +111,7 @@ public class DbController {
             }
             return rs_tests;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         return null;
     }
@@ -132,7 +136,7 @@ public class DbController {
             pstmt.setString(4, exec_time);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
     }
 
@@ -163,7 +167,7 @@ public class DbController {
             Class.forName("org.sqlite.JDBC");
             try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbUrl)) {
                 if (conn != null) {
-                    System.out.println("A new database has been created.");
+                    logger.log(PluginLogger.Level.INFO, "A new databse has been created");
                     Statement stmt = conn.createStatement();
                     String sql = "CREATE TABLE \"testResult\" ( \"id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"test_id\" INTEGER, \"result\" INTEGER, \"exec_time\" TEXT, \"test_run\" INTEGER )";
                     stmt.executeUpdate(sql);
@@ -172,7 +176,7 @@ public class DbController {
                     stmt.executeUpdate(sql);
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, e.getMessage());
             }
         }
     }

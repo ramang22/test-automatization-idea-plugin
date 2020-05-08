@@ -42,10 +42,7 @@ public class StartUpActivity implements StartupActivity {
         PluginSingleton.getInstance().setProject(project);
         PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath() + "/");
         //test all methods in tests
-        logger.log(PluginLogger.Level.INFO,"kokotina");
-        logger.log(PluginLogger.Level.INFO,"kokotina");
-        logger.log(PluginLogger.Level.INFO,"kokotina");
-        logger.log(PluginLogger.Level.INFO,"kokotina");
+        logger.log(PluginLogger.Level.INFO, "Plugin startup");
 
         PsiHandler psiHandler = new PsiHandler();
 
@@ -70,7 +67,7 @@ public class StartUpActivity implements StartupActivity {
         try {
             cloverRunner.runClover();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         // openclover api html report
         cloverApiRunner.runHtmlReporter();
@@ -79,7 +76,7 @@ public class StartUpActivity implements StartupActivity {
         try {
             cloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
 
         // get all classes in tests
@@ -93,7 +90,7 @@ public class StartUpActivity implements StartupActivity {
         try {
             cloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         // for every class
         for (PsiClass c : allClassesForProject) {
