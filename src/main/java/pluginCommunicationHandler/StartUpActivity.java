@@ -37,10 +37,10 @@ public class StartUpActivity implements StartupActivity {
 
         //setup code change listener
         PsiManager psiManager = PsiManager.getInstance(project);
-        psiManager.addPsiTreeChangeListener(new CodeChangeListener());
         //set project variables
         PluginSingleton.getInstance().setProject(project);
         PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath() + "/");
+        psiManager.addPsiTreeChangeListener(new CodeChangeListener());
         //test all methods in tests
         logger.log(PluginLogger.Level.INFO, "Plugin startup");
 
@@ -100,6 +100,7 @@ public class StartUpActivity implements StartupActivity {
                 psiHandler.mapLinesToTests(c, TestSingleton.getInstance().getCoverageByClass().get(c.getName()));
             }
         }
+
     }
 
 }

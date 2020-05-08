@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>org.rezane.IntelliJ-IDEA-test-run-plugin</id>
-    <name>100% testup time</name>
-    <version>1.0-SNAPSHOT</version>
+    <name>Automatic Unit Tester</name>
+    <version>1.1.1</version>
     <vendor email="wibrach@gmail.com" url="github.com/rezane">Rezane studio</vendor>
 
     <description><![CDATA[

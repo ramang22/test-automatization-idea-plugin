@@ -14,7 +14,7 @@ public class TestResultDb {
         this.test_id = test_id;
         this.test_name = test_name;
         this.result = result;
-        if (exec_time == "" || exec_time == " "){
+        if (exec_time.equals("") || exec_time.equals(" ") || exec_time.isEmpty()){
             this.exec_time = "0";
         }
         this.exec_time = exec_time;

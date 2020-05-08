@@ -22,7 +22,7 @@ public class cloverApiRunner implements CustomRunner {
         if (response_code != 0) {
             logger.log(PluginLogger.Level.ERROR, "Error during HTML reporter run");
         } else {
-            logger.log(PluginLogger.Level.OK, "Error during HTML reporter run");
+            logger.log(PluginLogger.Level.OK, "HTML reporter run OK");
         }
     }
 

@@ -13,13 +13,13 @@ public class cloverRunner {
     public static void runClover() throws InterruptedException {
         String pomPath = PluginSingleton.getInstance().getPomPath();
         Process process;
-        if (System.getProperty("os.name").equals("Mac OS X")) {
+        if (!System.getProperty("os.name").toLowerCase().contains("win")) {
             try {
                 // TODO windows run too, check if is possible to run from clover api
                 String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "clean", "clover:setup", "test", "clover:aggregate", "clover:clover"};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR, e.getMessage());
+                logger.log(PluginLogger.Level.ERROR,"UNIX : "+ e.getMessage());
                 process = null;
             }
             int result = process.waitFor();
@@ -34,7 +34,7 @@ public class cloverRunner {
                 String[] exec_cmd = new String[]{"cmd.exe", "/c", "mvn", "-f", pomPath, "clean", "clover:setup", "test", "clover:aggregate", "clover:clover"};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR, e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, "Windows : " + e.getMessage());
                 process = null;
             }
 //            int result = process.waitFor();

@@ -127,7 +127,6 @@ public class PsiHandler {
             }
             int lineNum = document.getLineNumber(elem.getTextOffset());
             if (map.containsKey(lineNum + 1)) {
-
                 if (TestSingleton.getInstance().getPsiElementToTests().containsKey(elem)) {
                     TestSingleton.getInstance().getPsiElementToTests().get(elem).addAll(map.get(lineNum + 1));
                     addParentElement(elem, map, lineNum);
@@ -138,6 +137,7 @@ public class PsiHandler {
                 }
                 for (String testName : map.get(lineNum + 1)) {
                     if (TestSingleton.getInstance().getTestToPsiElements().containsKey(testName)) {
+
                         TestSingleton.getInstance().getTestToPsiElements().get(testName).add(elem);
                     } else {
                         HashSet<PsiElement> newElemList = new HashSet<>();

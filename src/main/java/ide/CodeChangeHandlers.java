@@ -1,5 +1,6 @@
 package ide;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -58,14 +59,16 @@ public class CodeChangeHandlers {
     public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent, PsiElement element, PsiElement inMap) {
         // TODO check if is method in test
         // check if event is in method not outside
-        if (this.checkIfEventIsInMethods(psiTreeChangeEvent)) {
+        if (this.checkIfEventIsInMethods(psiTreeChangeEvent) &&
+                this.checkIfEventIsInJava(Objects.requireNonNull(psiTreeChangeEvent.getFile()).getName()) &&
+                this.checkIfEventIsNotTest(psiTreeChangeEvent)
+        ) {
             //check if parent element in new or element changed element is in nap
             if (TestSingleton.getInstance().getPsiElementToTests().containsKey(inMap)) {
                 // get all tests mapped for element
                 HashSet<String> testNames = new HashSet<>(TestSingleton.getInstance().getPsiElementToTests().get(inMap));
                 // add event to events for highlights
                 TestSingleton.getInstance().getTestsForExecution().addAll(testNames);
-
                 //add event to test method
                 for (String name : testNames) {
                     addCustomElement(element, inMap, name);
@@ -78,6 +81,22 @@ public class CodeChangeHandlers {
 
             }
         }
+    }
+
+    private boolean checkIfEventIsNotTest(PsiTreeChangeEvent psiTreeChangeEvent) {
+        PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
+        PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
+                (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
+        if (parentMethod == null){
+            return false;
+        }else {
+            PsiHandler checkTest = new PsiHandler();
+            return !checkTest.isTest(parentMethod);
+        }
+    }
+
+    private boolean checkIfEventIsInJava(String name) {
+        return name.contains(".java");
     }
 
     private void addCustomElement(PsiElement element, PsiElement parentElement, String test_name) {
@@ -103,19 +122,29 @@ public class CodeChangeHandlers {
         return parentMethod != null;
     }
 
-    private void checkTimer() {
-        if (!PluginSingleton.getInstance().isTestExecution()) {
-            if (PluginSingleton.getInstance().isTimerWorking()) {
-                // stop timer and start again
-                PluginSingleton.getInstance().getTimer().cancel();
-                PluginSingleton.getInstance().setTimer(new Timer());
-                ScheduleNewTimer();
-            } else {
-                // start timer
-                PluginSingleton.getInstance().setTimerWorking(true);
-                ScheduleNewTimer();
+    private void checkTimer(PsiTreeChangeEvent psiTreeChangeEvent) {
+        if (this.checkIfEventIsInMethods(psiTreeChangeEvent) &&
+                this.checkIfEventIsInJava(Objects.requireNonNull(psiTreeChangeEvent.getFile()).getName()) &&
+                this.checkIfEventIsNotTest(psiTreeChangeEvent)
+        ) {
+            if (!PluginSingleton.getInstance().isTestExecution()) {
+                if (PluginSingleton.getInstance().isTimerWorking()) {
+                    // stop timer and start again
+                    PluginSingleton.getInstance().getTimer().cancel();
+                    PluginSingleton.getInstance().setTimer(new Timer());
+                    ScheduleNewTimer();
+                } else {
+                    // start timer
+                    PluginSingleton.getInstance().setTimerWorking(true);
+                    ScheduleNewTimer();
+                }
             }
         }
+    }
+
+    private void safeAllFiles() {
+        ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication()
+                .runWriteAction(() -> FileDocumentManager.getInstance().saveAllDocuments()));
     }
 
     private void ScheduleNewTimer() {
@@ -125,6 +154,7 @@ public class CodeChangeHandlers {
                 logger.log(PluginLogger.Level.INFO, "Starting test sequence.");
                 PluginSingleton.getInstance().setTestExecution(true);
                 try {
+                    safeAllFiles();
                     testStater.runAllTests();
                 } catch (InterruptedException e) {
                     logger.log(PluginLogger.Level.ERROR, e.getMessage());
@@ -145,7 +175,7 @@ public class CodeChangeHandlers {
 //        New child Element : x-y ,hashCode : 34460
 //        Element parent : return xy; ,hashCode : 565900040
         // TODO Extract element parent
-        this.checkTimer();
+        this.checkTimer(psiTreeChangeEvent);
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
@@ -163,13 +193,13 @@ public class CodeChangeHandlers {
 
     public void handlerBeforePropertyChange(PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO idk what it does
-        this.checkTimer();
+        this.checkTimer(psiTreeChangeEvent);
         this.printEventElements(psiTreeChangeEvent);
     }
 
     public void handlerBeforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO handle element parent
-        this.checkTimer();
+        this.checkTimer(psiTreeChangeEvent);
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
@@ -189,7 +219,7 @@ public class CodeChangeHandlers {
     }
 
     public void handlerChildAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        this.checkTimer();
+        this.checkTimer(psiTreeChangeEvent);
         PsiElement element_child = psiTreeChangeEvent.getChild();
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent, element_child, element_parent);

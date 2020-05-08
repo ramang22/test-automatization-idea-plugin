@@ -17,12 +17,12 @@ public class testRunner {
         String testToRun = "-Dtest=" + className + "#" + test_name;
         Process process;
         logger.log(PluginLogger.Level.INFO, "Running test : " + test_name);
-        if (System.getProperty("os.name").equals("Mac OS X")) {
+        if (!System.getProperty("os.name").toLowerCase().contains("win")) {
             try {
                 String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "test", testToRun};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR, e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, "UNIX : "+e.getMessage());
                 process = null;
             }
             int result = process.waitFor();
@@ -31,7 +31,7 @@ public class testRunner {
                 String[] exec_cmd = new String[]{"cmd.exe", "/c", "mvn", "-f", pomPath, "test", testToRun};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR, e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, "Windows : "+e.getMessage());
                 process = null;
             }
 //            int result = process.waitFor();
@@ -45,10 +45,10 @@ public class testRunner {
             db_controller.addTestResult(test_name, 0, time);
             HighlightSingleton.getInstance().getTests_to_highlight().add(test_name);
             //CodeHighlighter.highlightTest(test_name, false);
-            logger.log(PluginLogger.Level.INFO, "Test " + test_name + " failed.");
+            logger.log(PluginLogger.Level.FAILED, "Test " + test_name + " failed.");
         } else {
             db_controller.addTestResult(test_name, 1, time);
-            logger.log(PluginLogger.Level.INFO, "Test " + test_name + " success.");
+            logger.log(PluginLogger.Level.PASSED, "Test " + test_name + " success.");
         }
 
     }

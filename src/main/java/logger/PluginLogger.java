@@ -13,32 +13,35 @@ public class PluginLogger {
     public final boolean consoleLog = true;
     private String class_name;
 
-    public  PluginLogger(Class name){
+    public PluginLogger(Class name) {
         this.class_name = name.getName();
     }
 
     public enum Level {
         INFO,
         ERROR,
-        OK
+        OK,
+        WARN,
+        FAILED,
+        PASSED
     }
 
-    public String getLogString(String date, Level level, String msg){
+    public String getLogString(String date, Level level, String msg) {
         StringBuilder returnString = new StringBuilder();
         returnString.append(date);
-        returnString.append(" : ");
-        returnString.append(this.class_name);
-        returnString.append(", Logger level : ");
+        returnString.append(" [ ");
         returnString.append(level);
+        returnString.append(" ] : ");
+        returnString.append(this.class_name);
         returnString.append(" -> ");
         returnString.append(msg);
         return returnString.toString();
     }
 
     public void writeLogIntoFile(String loggerUrl, String date_string, Level level, String msg) throws IOException {
-        FileWriter myWriter = new FileWriter(loggerUrl,true);
+        FileWriter myWriter = new FileWriter(loggerUrl, true);
         BufferedWriter bw = new BufferedWriter(myWriter);
-        bw.write(this.getLogString(date_string,level,msg));
+        bw.write(this.getLogString(date_string, level, msg));
         bw.newLine();
         bw.close();
         myWriter.close();
@@ -56,19 +59,19 @@ public class PluginLogger {
         }
     }
 
-    public void handleLog(Level level,String msg) throws IOException {
+    public void handleLog(Level level, String msg) throws IOException {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String date_string = formatter.format(date);
-        if (this.consoleLog){
-            System.out.println(this.getLogString(date_string,level,msg));
+        if (this.consoleLog) {
+            System.out.println(this.getLogString(date_string, level, msg));
         }
-        this.logInfoFile(level,date_string,msg);
+        this.logInfoFile(level, date_string, msg);
     }
 
-    public void log(Level level,String msg){
+    public void log(Level level, String msg) {
         try {
-            this.handleLog(level,msg);
+            this.handleLog(level, msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

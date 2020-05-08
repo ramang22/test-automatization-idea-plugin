@@ -72,7 +72,6 @@ public class MainTestController {
         HashMap<String, List<Event>> copiedEvents = new HashMap<>(TestSingleton.getInstance().getTestMethod_CustomEvent());
         TestSingleton.getInstance().setTestMethod_CustomEvent_forExecution(copiedEvents);
         TestSingleton.getInstance().getTestMethod_CustomEvent().clear();
-
         HashSet<String> testMethods = TestSingleton.getInstance().getTestsForExecution();
         DbController db_controller = new DbController();
         HashMap<String, List<TestResultDb>> test_db_result = new HashMap<>();
