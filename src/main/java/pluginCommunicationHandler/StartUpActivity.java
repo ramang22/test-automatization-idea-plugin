@@ -43,6 +43,10 @@ public class StartUpActivity implements StartupActivity {
         PluginSingleton.getInstance().setProjectRootFolderPath(project.getBasePath() + "/");
         //test all methods in tests
         logger.log(PluginLogger.Level.INFO,"kokotina");
+        logger.log(PluginLogger.Level.INFO,"kokotina");
+        logger.log(PluginLogger.Level.INFO,"kokotina");
+        logger.log(PluginLogger.Level.INFO,"kokotina");
+
         PsiHandler psiHandler = new PsiHandler();
 
         DbController db_controller = new DbController();
