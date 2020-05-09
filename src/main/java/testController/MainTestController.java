@@ -3,6 +3,7 @@ package testController;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
 import database.DbController;
 import database.TestResultDb;
 import highlighter.CodeHighlighter;
@@ -17,7 +18,9 @@ import mavenRunner.*;
 import opencloverController.*;
 import prioritization.PrioritizationValuator;
 import test.Event;
+import test.Test;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class MainTestController {
@@ -27,14 +30,34 @@ public class MainTestController {
     public void runCoverage() {
 
         PluginSingleton.getInstance().getPackage_file_paths().clear();
-        TestSingleton.getInstance().getTestToPsiElements().clear();
+        TestSingleton.getInstance().getTestMethod_CustomEvent().clear();
+        TestSingleton.getInstance().getTestMethod_CustomEvent_forExecution().clear();
+        TestSingleton.getInstance().getTestClasses().clear();
+
+        PsiHandler psiHandler = new PsiHandler();
+
+        DbController db_controller = new DbController();
+
+        try {
+            db_controller.checkIfDbExists();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        List<PsiMethod> methods = psiHandler.getAllTests(PluginSingleton.getInstance().getProject());
+
+        for (PsiMethod testMethod : methods) {
+            // check if test is in db
+            db_controller.addTestToDb(testMethod.getName());
+            HashSet<PsiMethod> a = psiHandler.traverseBodyToFindAllMethodUsages(testMethod.getBody());
+            Test test = new Test(testMethod, Objects.requireNonNull(testMethod.getContainingClass()), a);
+            TestSingleton.getInstance().getTestClasses().put(test.getName(), test.getTest_class_name());
+        }
 
         // run mvn clover
-        PsiHandler psiHandler = new PsiHandler();
         try {
             cloverRunner.runClover();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         // openclover api html report
         cloverApiRunner.runHtmlReporter();
@@ -43,7 +66,7 @@ public class MainTestController {
         try {
             cloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
 
         // get all classes in tests
@@ -57,13 +80,19 @@ public class MainTestController {
         try {
             cloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
+        // for every class
         for (PsiClass c : allClassesForProject) {
+            // check if report is generated
             if (TestSingleton.getInstance().getCoverageByClass().containsKey(c.getName())) {
+                // if y, get all elements on line of code
                 psiHandler.mapLinesToTests(c, TestSingleton.getInstance().getCoverageByClass().get(c.getName()));
             }
         }
+
+
+
     }
 
     public void runAllTests() throws InterruptedException {
