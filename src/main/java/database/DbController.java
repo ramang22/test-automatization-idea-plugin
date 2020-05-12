@@ -1,7 +1,6 @@
 package database;
 
 import logger.PluginLogger;
-import pluginCommunicationHandler.StartUpActivity;
 import pluginResources.PluginSingleton;
 
 import java.io.File;
@@ -11,17 +10,22 @@ import java.util.List;
 
 public class DbController {
 
+    /**
+     * Instance of PluginLogger.
+     */
     final PluginLogger logger = new PluginLogger(DbController.class);
 
+    /**
+     * Method to establish connection to database.
+     *
+     * @return object of JDBC:Connection
+     */
     private Connection connect() {
         Connection conn = null;
         try {
-            // db parameters
             Class.forName("org.sqlite.JDBC");
-            // TODO find how auto import this
             String path = PluginSingleton.getInstance().getProjectRootFolderPath() + "TestPlugin/database/test.db";
             String url = "jdbc:sqlite:" + path;
-            // create a connection to the database
             conn = DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
@@ -29,6 +33,11 @@ public class DbController {
         return conn;
     }
 
+    /**
+     * Creates new test object in database
+     *
+     * @param name Test name
+     */
     public void insert(String name) {
         String sql = "INSERT INTO test(name) VALUES(?)";
 
@@ -41,19 +50,20 @@ public class DbController {
         }
     }
 
+    /**
+     * Get all tests by name.
+     *
+     * @param test_name Test name
+     * @return List of TestDb objects retrieved from database.
+     */
     public List<TestDb> getTestByTestName(String test_name) {
         String sql = "SELECT *"
                 + "FROM Test WHERE name = ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // set the value
             pstmt.setString(1, test_name);
-            //
             ResultSet rs = pstmt.executeQuery();
-
-            // loop through the result set
             List<TestDb> rs_tests = new ArrayList<>();
             while (rs.next()) {
                 rs_tests.add(new TestDb(rs.getString("name"), rs.getInt("id")));
@@ -65,6 +75,12 @@ public class DbController {
         return null;
     }
 
+    /**
+     * Update existing test.
+     *
+     * @param id   Test id
+     * @param name Test name
+     */
     public void update(int id, String name) {
         String sql = "UPDATE Test SET name = ? , "
                 + "lastResult = ? "
@@ -83,6 +99,12 @@ public class DbController {
         }
     }
 
+    /**
+     * Get all results run in history by test id.
+     *
+     * @param test_id Test id
+     * @return List of TestResultDb for test id
+     */
     public List<TestResultDb> getAllTestResultsById(int test_id) {
         String sql = "SELECT *"
                 + "FROM testResult WHERE test_id = ?"
@@ -90,15 +112,9 @@ public class DbController {
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // set the value
             pstmt.setInt(1, test_id);
-            //
             ResultSet rs = pstmt.executeQuery();
-
-            // loop through the result set
             List<TestResultDb> rs_tests = new ArrayList<>();
-            //(int id, int test_id, int test_run,String test_name, int result, String exec_time)
             while (rs.next()) {
                 rs_tests.add(new TestResultDb(
                         rs.getInt("id"),
@@ -116,8 +132,12 @@ public class DbController {
         return null;
     }
 
+    /**
+     * Check if test is in already in db.
+     *
+     * @param testName Test name
+     */
     public void addTestToDb(String testName) {
-        // check if is test in db
         List<TestDb> tests = getTestByTestName(testName);
         if (tests.isEmpty()) {
             insert(testName);
@@ -125,6 +145,14 @@ public class DbController {
     }
 
 
+    /**
+     * Insert result of test run to databse.
+     *
+     * @param test_id   Test id
+     * @param test_run  Test run number
+     * @param result    Test result
+     * @param exec_time Test execution time
+     */
     public void insertTestResult(int test_id, int test_run, int result, String exec_time) {
         String sql = "INSERT INTO testResult(test_id, test_run, result, exec_time) VALUES(?,?,?,?)";
 
@@ -140,6 +168,13 @@ public class DbController {
         }
     }
 
+    /**
+     * Add result of test run to database based on test run.
+     *
+     * @param test_name Test name
+     * @param result    Test result
+     * @param time      Test execution time
+     */
     public void addTestResult(String test_name, int result, String time) {
         List<TestDb> tests = getTestByTestName(test_name);
         for (TestDb test : tests) {
@@ -150,6 +185,12 @@ public class DbController {
         }
     }
 
+    /**
+     * Get all test results by test name
+     *
+     * @param test_name Test name
+     * @return List of TestResultDb for test name.
+     */
     public List<TestResultDb> getAllTestResultsByName(String test_name) {
         List<TestDb> tests = getTestByTestName(test_name);
         List<TestResultDb> resultsForTest = new ArrayList<>();
@@ -159,6 +200,12 @@ public class DbController {
         return resultsForTest;
     }
 
+    /**
+     * Method checks if database is initialized in project, if not creates new one.
+     *
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public void checkIfDbExists() throws ClassNotFoundException, SQLException {
         String dbUrl = PluginSingleton.getInstance().getProjectRootFolderPath() + "TestPlugin/database/test.db";
         File f = new File(dbUrl);

@@ -1,15 +1,20 @@
 package ide;
 
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import pluginResources.TestSingleton;
 
 
 public class CodeChangeListener implements PsiTreeChangeListener {
 
+    /**
+     * Object CodeChangeHandlers for handling changes
+     */
     private CodeChangeHandlers codeChangeHanlder = new CodeChangeHandlers();
 
+    /**
+     * childAdded
+     * @param psiTreeChangeEvent change event
+     */
     @Override
     public void childAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         codeChangeHanlder.handlerChildAdded(psiTreeChangeEvent);
@@ -43,11 +48,19 @@ public class CodeChangeListener implements PsiTreeChangeListener {
         //codeChangeHanlder.handlerBeforeChildAddition(psiTreeChangeEvent);
     }
 
+    /**
+     * beforeChildRemoval
+     * @param psiTreeChangeEvent change event
+     */
     @Override
     public void beforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         codeChangeHanlder.handlerBeforeChildRemoval(psiTreeChangeEvent);
     }
 
+    /**
+     * beforeChildReplacement
+     * @param psiTreeChangeEvent change event
+     */
     @Override
     public void beforeChildReplacement(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         codeChangeHanlder.handlerBeforeChildReplacement(psiTreeChangeEvent);

@@ -3,32 +3,56 @@ package pluginResources;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import ide.Tester;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Timer;
 
 public class PluginSingleton {
+    /**
+     * timer delay ,default 3sec
+     */
     public static int TIMER_DELAY = 3;
     private static PluginSingleton INSTANCE = null;
+    /**
+     * project instance
+     */
     private Project project;
+    /**
+     * path to project in file system
+     */
     private String projectRootFolderPath;
+    /**
+     * path to pom file
+     */
     private String pomPath;
+    /**
+     * path to clover DB
+     */
     private String clover_db_path;
+    /**
+     * path to html report
+     */
     private String clover_html_report_path;
+    /**
+     * path to package file paths
+     */
     private HashSet<String> package_file_paths;
+    /**
+     * timer
+     */
     private Timer timer;
+    /**
+     * timer is counting down
+     */
     private boolean timerWorking;
+    /**
+     * tests are in execution
+     */
     private boolean testExecution;
-    Tester tester;
 
 
-    private PluginSingleton()
-    {
-        this.tester = new Tester();
-        this.projectRootFolderPath  = "";
+    private PluginSingleton() {
+        this.projectRootFolderPath = "";
         this.pomPath = "";
         this.clover_db_path = "";
         this.clover_html_report_path = "";
@@ -38,8 +62,7 @@ public class PluginSingleton {
         this.testExecution = false;
     }
 
-    public static PluginSingleton getInstance()
-    {
+    public static PluginSingleton getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new PluginSingleton();
         }
@@ -60,22 +83,14 @@ public class PluginSingleton {
         this.project = project;
     }
 
-    public Tester getTester() {
-        return tester;
-    }
-
-    public void setTester(Tester tester) {
-        this.tester = tester;
-    }
-
     public String getProjectRootFolderPath() {
         return projectRootFolderPath;
     }
 
     public void setProjectRootFolderPath(String projectRootFolderPath) {
-        this.setPomPath(projectRootFolderPath+"pom.xml");
-        this.setClover_db_path(projectRootFolderPath+"target/clover/clover.db");
-        this.setClover_html_report_path(projectRootFolderPath+"TestPlugin/openclover/");
+        this.setPomPath(projectRootFolderPath + "pom.xml");
+        this.setClover_db_path(projectRootFolderPath + "target/clover/clover.db");
+        this.setClover_html_report_path(projectRootFolderPath + "TestPlugin/openclover/");
         this.projectRootFolderPath = projectRootFolderPath;
     }
 

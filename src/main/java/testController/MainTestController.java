@@ -1,7 +1,6 @@
 package testController;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import database.DbController;
@@ -24,9 +23,14 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class MainTestController {
-
+    /**
+     * instatnce of logger
+     */
     private final PluginLogger logger = new PluginLogger(MainTestController.class);
 
+    /**
+     * method for re run coverage button
+     */
     public void runCoverage() {
 
         PluginSingleton.getInstance().getPackage_file_paths().clear();
@@ -94,7 +98,9 @@ public class MainTestController {
 
     }
 
-
+    /**
+     * method for prioritization and test execution
+     */
     public void runAllTests() throws InterruptedException {
         //PluginSingleton.safeAllFiles();
         //copy event map into new map for execution
@@ -142,6 +148,9 @@ public class MainTestController {
 
     }
 
+    /**
+     * method for highlighting events
+     */
     public void runHighlighter() {
         StringBuilder toolTipText = new StringBuilder();
         toolTipText.append("Failed tests :\n");

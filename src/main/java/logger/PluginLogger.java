@@ -10,13 +10,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PluginLogger {
+    /**
+     * if console log is enabled
+     */
     public final boolean consoleLog = true;
+    /**
+     * class name for logging
+     */
     private String class_name;
 
     public PluginLogger(Class name) {
         this.class_name = name.getName();
     }
 
+    /**
+     * level of logger info
+     */
     public enum Level {
         INFO,
         ERROR,
@@ -26,6 +35,14 @@ public class PluginLogger {
         PASSED
     }
 
+    /**
+     * building logger msg
+     *
+     * @param date  date of log
+     * @param level level of log
+     * @param msg   log msg
+     * @return Log msg in String
+     */
     public String getLogString(String date, Level level, String msg) {
         StringBuilder returnString = new StringBuilder();
         returnString.append(date);
@@ -38,6 +55,14 @@ public class PluginLogger {
         return returnString.toString();
     }
 
+    /**
+     * Write log into log file
+     *
+     * @param loggerUrl   log file url
+     * @param date_string date of log
+     * @param level       log level
+     * @param msg         message of log
+     */
     public void writeLogIntoFile(String loggerUrl, String date_string, Level level, String msg) throws IOException {
         FileWriter myWriter = new FileWriter(loggerUrl, true);
         BufferedWriter bw = new BufferedWriter(myWriter);
@@ -47,6 +72,13 @@ public class PluginLogger {
         myWriter.close();
     }
 
+    /**
+     * init log into file
+     *
+     * @param level       log level
+     * @param date_string log date
+     * @param msg         message of log
+     */
     public void logInfoFile(Level level, String date_string, String msg) throws IOException {
         String loggerUrl = PluginSingleton.getInstance().getProjectRootFolderPath() + "TestPlugin/logger/log.txt";
         File f = new File(loggerUrl);
@@ -59,6 +91,12 @@ public class PluginLogger {
         }
     }
 
+    /**
+     * handle log registration
+     *
+     * @param level log level
+     * @param msg   message
+     */
     public void handleLog(Level level, String msg) throws IOException {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -69,6 +107,12 @@ public class PluginLogger {
         this.logInfoFile(level, date_string, msg);
     }
 
+    /**
+     * method for call logger outside of logger class
+     *
+     * @param level level
+     * @param msg   message
+     */
     public void log(Level level, String msg) {
         try {
             this.handleLog(level, msg);

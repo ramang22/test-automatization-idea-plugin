@@ -12,26 +12,29 @@ import mavenRunner.cloverRunner;
 import opencloverController.cloverParser;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
-import pluginResources.HighlightSingleton;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 import test.Test;
-import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 public class StartUpActivity implements StartupActivity {
-
+    /**
+     * instance of PlugginLogger
+     */
     final PluginLogger logger = new PluginLogger(StartUpActivity.class);
 
     public StartUpActivity() {
     }
 
+    /**
+     * first method in plugin to be executed
+     *
+     * @param project project instance
+     */
     @Override
     public void runActivity(@NotNull Project project) {
 

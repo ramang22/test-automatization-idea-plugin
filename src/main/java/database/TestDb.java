@@ -1,8 +1,13 @@
 package database;
 
 public class TestDb {
-
+    /**
+     * Test name
+     */
     private String name;
+    /**
+     * Test id
+     */
     private Integer id;
 
     public TestDb(String name, Integer id) {

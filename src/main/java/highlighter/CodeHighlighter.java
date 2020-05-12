@@ -1,17 +1,9 @@
 package highlighter;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.markup.*;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,19 +14,33 @@ import test.Event;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class CodeHighlighter {
 
+    /**
+     * Lavel of highlighted layer
+     */
     public static int HIGHLIGHT_LAYER = 66;
 
+    /**
+     * Highlight lane with gutter icon
+     *
+     * @param document   Document where highlight should appeared.
+     * @param lineNumber Line number of highlight
+     * @param text       Gutter icon text
+     */
     public static void addLineHighlight(Document document, int lineNumber,
                                         String text) {
         //setupLineStyle(type);
         addGutterIcon(getRangeHighlighter(document, lineNumber), CustomIcons.FAIL_GUTTER, text);
     }
 
+    /**
+     * @param document   Document where highlight should appeared.
+     * @param lineNumber Line number of highlight.
+     * @return RangeHighlighter
+     */
     @NotNull
     private static RangeHighlighter getRangeHighlighter(Document document, int lineNumber) {
 
@@ -45,6 +51,13 @@ public class CodeHighlighter {
         return highlighter;
     }
 
+    /**
+     * Gutter icon initialization.
+     *
+     * @param highlighter RangeHighlighter
+     * @param icon        Icon.png
+     * @param text        Gutter icon text.
+     */
     private static void addGutterIcon(@NotNull RangeHighlighter highlighter, Icon icon, String text) {
         highlighter.setGutterIconRenderer(new GutterIconRenderer() {
             @Override
@@ -72,10 +85,19 @@ public class CodeHighlighter {
 
     }
 
+    /**
+     * @param document Document where highlight should appeared.
+     * @return retrieve markup model from document
+     */
     private static MarkupModel getMarkupModel(Document document) {
         return DocumentMarkupModel.forDocument(document, PluginSingleton.getInstance().getProject(), true);
     }
 
+    /**
+     * Init text attributes
+     *
+     * @return TextAttributes
+     */
     @NotNull
     private static TextAttributes getTextAttributes() {
         TextAttributes textAttributes = new TextAttributes();
@@ -84,6 +106,11 @@ public class CodeHighlighter {
         return textAttributes;
     }
 
+    /**
+     * @param document   Document where highlight should appeared.
+     * @param line_num   Line number
+     * @param withGutter gutter line or not
+     */
     private static void saveHighlight(Document document, int line_num, Boolean withGutter) {
         if (withGutter) {
             HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().add(new HighlightedLane(document, line_num));
@@ -92,6 +119,11 @@ public class CodeHighlighter {
         }
     }
 
+    /**
+     * Highlight line from event
+     *
+     * @param event Change event
+     */
     private static void highLightLine(@NotNull Event event) {
         Document document = event.getDocument();
         int lineNum = document.getLineNumber(event.getElement().getTextOffset());
@@ -103,12 +135,24 @@ public class CodeHighlighter {
 
     }
 
+    /**
+     * Highlight line from event with gutter
+     *
+     * @param element     Change event
+     * @param toolTipText Gutter icon text
+     */
     private static void highLightLineWithGutter(@NotNull Event element, String toolTipText) {
         saveHighlight(element.getDocument(), element.getParentMethodLineNumber(), true);
         int lineNum = element.getDocument().getLineNumber(element.getParentMethod().getTextOffset());
         addLineHighlight(element.getDocument(), lineNum, toolTipText);
     }
 
+    /**
+     * Remove highlight on specific line
+     *
+     * @param document   Document where highlight should appeared.
+     * @param lineNumber Line number
+     */
     private static void removeLineHighlight(Document document, int lineNumber) {
         MarkupModel markupModel = getMarkupModel(document);
         TextRange lineTextRange = DocumentUtil.getLineTextRange(document, lineNumber);
@@ -119,6 +163,9 @@ public class CodeHighlighter {
         }
     }
 
+    /**
+     * Removes all highlights
+     */
     public static void removeOldHighlights() {
         if (!HighlightSingleton.getInstance().getHighlighted_lanes().isEmpty()) {
             for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
@@ -142,6 +189,13 @@ public class CodeHighlighter {
                 && highlighter.getLayer() == HIGHLIGHT_LAYER;
     }
 
+    /**
+     * Highlighter main
+     *
+     * @param test_name   test name to high
+     * @param test_passed
+     * @param tooltip
+     */
     public static void highlightTest(String test_name, Boolean test_passed, String tooltip) {
         List<Event> events = TestSingleton.getInstance().getTestMethod_CustomEvent_forExecution().get(test_name);
         List<Integer> methods = new ArrayList<>();

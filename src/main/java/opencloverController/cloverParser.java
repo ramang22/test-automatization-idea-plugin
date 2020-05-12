@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Stream;
 
 import logger.PluginLogger;
@@ -17,9 +15,17 @@ import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 
 public class cloverParser {
-
+    /**
+     * logger instance
+     */
     static final PluginLogger logger = new PluginLogger(cloverParser.class);
 
+    /**
+     * Read whole file and put it into string
+     *
+     * @param filepath file path
+     * @return String from file
+     */
     private String readWholeFile(String filepath) {
         StringBuilder contentBuilder = new StringBuilder();
         try (Stream<String> stream = Files.lines(Paths.get(filepath), StandardCharsets.UTF_8)) {
@@ -30,6 +36,12 @@ public class cloverParser {
         return contentBuilder.toString();
     }
 
+    /**
+     * Get json from OpenClover js files
+     *
+     * @param file_content file input
+     * @return Map<TestId, TestName>
+     */
     private HashMap<Integer, String> getTestTargets(String file_content) throws JSONException {
         HashMap<Integer, String> id_name_map = new HashMap<>();
         String json_string = this.getSubstringByTwoStrings("clover.testTargets = ", "// JSON: { lines ", file_content);
@@ -48,6 +60,14 @@ public class cloverParser {
         return null;
     }
 
+    /**
+     * get Substring by two strings
+     *
+     * @param start        first string
+     * @param end          second string
+     * @param searchString all string
+     * @return return substring from searchstring
+     */
     private String getSubstringByTwoStrings(String start, String end, String searchString) {
         int startIndexOfJSON = searchString.indexOf(start);
         int endIndexOfJSON = searchString.indexOf(end);
@@ -55,6 +75,12 @@ public class cloverParser {
         return searchString.substring(startIndexOfJSON + lenTestTargets, endIndexOfJSON);
     }
 
+    /**
+     * @param test_lines        test lines
+     * @param test_id_test_name test id name map
+     * @param test_id           test id
+     * @param line_num          line number
+     */
     private void checkIfCouldBeAdded(HashMap<Integer, HashSet<String>> test_lines, HashMap<Integer, String> test_id_test_name, String test_id, Integer line_num) {
         if (!test_id.equals("")) {
             if (test_lines.containsKey(line_num)) {
@@ -67,6 +93,11 @@ public class cloverParser {
         }
     }
 
+    /**
+     * @param test_id_test_name test id name map
+     * @param file_content      file input to string
+     * @return hashmap<line, list < testnames>
+     */
     private HashMap<Integer, HashSet<String>> getSrcFileLines(HashMap<Integer, String> test_id_test_name, String file_content) {
         HashMap<Integer, HashSet<String>> test_lines = new HashMap<>();
 
@@ -95,35 +126,36 @@ public class cloverParser {
         return test_lines;
     }
 
+    /**
+     * get coverage from class
+     *
+     * @param classPath class path
+     * @param className class name
+     */
     private void getTestCoverageInClass(String classPath, String className) throws JSONException {
-        // load file
         String file_content_string = this.readWholeFile(classPath);
-        // get 1. property clover.testTargets
         HashMap<Integer, String> test_id_test_name = this.getTestTargets(file_content_string);
-        // get 2. property clover.srcFileLines
         if (test_id_test_name != null) {
             HashMap<Integer, HashSet<String>> testCoverageByLine = this.getSrcFileLines(test_id_test_name, file_content_string);
             TestSingleton.getInstance().getCoverageByClass().put(className, testCoverageByLine);
         } else {
             logger.log(PluginLogger.Level.INFO, "For " + className + " no coverage found.");
         }
-
     }
 
-
+    /**
+     * get coverage for package
+     */
     public static void getTestCoverageWithinClasses() throws JSONException {
         cloverParser parser = new cloverParser();
 
-        // file paths
         HashSet<String> coveredClasses = PluginSingleton.getInstance().getPackage_file_paths();
-        // html report path
         String htmlReportPath = PluginSingleton.getInstance().getClover_html_report_path();
 
         for (String path : coveredClasses) {
-            //check if file exists in clover report
             File tempFile = new File(htmlReportPath + path);
             if (tempFile.exists()) {
-                logger.log(PluginLogger.Level.INFO, "Coverage for : "+path);
+                logger.log(PluginLogger.Level.INFO, "Coverage for : " + path);
                 parser.getTestCoverageInClass(htmlReportPath + path, path.split("/")[1].split("\\.")[0]);
 
             }

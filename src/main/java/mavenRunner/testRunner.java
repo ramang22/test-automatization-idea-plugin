@@ -1,7 +1,6 @@
 package mavenRunner;
 
 import database.DbController;
-import highlighter.CodeHighlighter;
 import logger.PluginLogger;
 import pluginResources.HighlightSingleton;
 import pluginResources.PluginSingleton;
@@ -9,9 +8,17 @@ import pluginResources.PluginSingleton;
 import java.io.*;
 
 public class testRunner {
-
+    /**
+     * Instance of PlugginLogger
+     */
     private static PluginLogger logger = new PluginLogger(testRunner.class);
 
+    /**
+     * Run test with maven
+     *
+     * @param className class name
+     * @param test_name test name
+     */
     public static void runTest(String className, String test_name) throws InterruptedException {
         String pomPath = PluginSingleton.getInstance().getPomPath();
         String testToRun = "-Dtest=" + className + "#" + test_name;
@@ -22,7 +29,7 @@ public class testRunner {
                 String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "test", testToRun};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR, "UNIX : "+e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, "UNIX : " + e.getMessage());
                 process = null;
             }
             int result = process.waitFor();
@@ -31,7 +38,7 @@ public class testRunner {
                 String[] exec_cmd = new String[]{"cmd.exe", "/c", "mvn", "-f", pomPath, "test", testToRun};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR, "Windows : "+e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, "Windows : " + e.getMessage());
                 process = null;
             }
 //            int result = process.waitFor();
@@ -53,6 +60,11 @@ public class testRunner {
 
     }
 
+    /**
+     * Extract time from output
+     * @param output String output
+     * @return String time
+     */
     public String getExecTime(String output) {
         int indexOfTime = output.indexOf("Time elapsed: ") + "Time elapsed: ".length();
         String timeString = output.substring(indexOfTime);

@@ -3,17 +3,18 @@ package opencloverController;
 import com.atlassian.clover.reporters.html.HtmlReporter;
 import logger.PluginLogger;
 import mavenRunner.CustomRunner;
-import org.xml.sax.SAXException;
 import pluginResources.PluginSingleton;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 
 public class cloverApiRunner implements CustomRunner {
-
+    /**
+     * Instance of plugin logger
+     */
     final static PluginLogger logger = new PluginLogger(cloverApiRunner.class);
 
+    /**
+     * run html reporter from OpenClover api
+     */
     public static void runHtmlReporter() {
         String clover_db_path = PluginSingleton.getInstance().getClover_db_path();
         String report_path = PluginSingleton.getInstance().getClover_html_report_path();

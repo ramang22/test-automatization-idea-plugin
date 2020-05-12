@@ -1,17 +1,26 @@
 package prioritization;
 
 public class PrioritizationValuator {
+    /**
+     * test name
+     */
     private String test_name;
+    /**
+     * historical value
+     */
     private double historyValue;
+    /**
+     * last execution time
+     */
     private double timeValue;
 
-    public PrioritizationValuator(String test_name, double historyValue, double timeValue){
+    public PrioritizationValuator(String test_name, double historyValue, double timeValue) {
         this.test_name = test_name;
         this.historyValue = historyValue;
         this.timeValue = timeValue;
     }
 
-    public PrioritizationValuator(){
+    public PrioritizationValuator() {
 
     }
 

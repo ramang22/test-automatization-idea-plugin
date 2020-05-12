@@ -1,11 +1,26 @@
 package database;
 
 public class TestResultDb {
+    /**
+     * Test id
+     */
     private int id;
+    /**
+     * Test run
+     */
     private int test_run;
     private int test_id;
+    /**
+     * Test name
+     */
     private String test_name;
+    /**
+     * Test result
+     */
     private int result;
+    /**
+     * Test execution time
+     */
     private String exec_time;
 
     public TestResultDb(int id, int test_id, int test_run,String test_name, int result, String exec_time){

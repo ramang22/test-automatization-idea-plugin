@@ -11,9 +11,21 @@ import java.util.List;
 public class HighlightSingleton {
 
     private static HighlightSingleton INSTANCE = null;
+    /**
+     * list of Highlighted Lanes
+     */
     private List<HighlightedLane> highlighted_lanes;
+    /**
+     * list of Highlighted Lanes with gutter
+     */
     private List<HighlightedLane> highlighted_lanes_with_gutter;
+    /**
+     * list of Highlighted methods headers
+     */
     private List<PsiElement> methodsHeaders;
+    /**
+     * list of test to highlight
+     */
     private HashSet<String> tests_to_highlight;
 
     private HighlightSingleton() {

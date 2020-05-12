@@ -3,8 +3,13 @@ package highlighter;
 import com.intellij.openapi.editor.Document;
 
 public class HighlightedLane {
-
+    /**
+     * Document where highlight is
+     */
     private Document document;
+    /**
+     * Line number of highlight
+     */
     private Integer line_num;
 
     HighlightedLane(Document doc, Integer line_num){

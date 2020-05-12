@@ -20,9 +20,20 @@ import java.util.Timer;
 
 public class CodeChangeHandlers {
 
+    /**
+     * Instance of MainTestController
+     */
     public static MainTestController testStater = new MainTestController();
+    /**
+     * Instance of PluginLogger.
+     */
     private final PluginLogger logger = new PluginLogger(CodeChangeHandlers.class);
 
+    /**
+     * Prints elements of psiTreeChangeEvent
+     *
+     * @param psiTreeChangeEvent element
+     */
     public void printEventElements(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
 
         PsiElement oldChild = psiTreeChangeEvent.getOldChild();
@@ -56,45 +67,56 @@ public class CodeChangeHandlers {
 
     }
 
+    /**
+     * Handle code change.
+     *
+     * @param psiTreeChangeEvent event of change
+     * @param element            PSI element
+     * @param inMap              PSI element map
+     */
     public void handleCodeChange(@NotNull PsiTreeChangeEvent psiTreeChangeEvent, PsiElement element, PsiElement inMap) {
-        // TODO check if is method in test
-        // check if event is in method not outside
         if (this.checkIfEventIsInMethods(psiTreeChangeEvent) &&
                 this.checkIfEventIsInJava(Objects.requireNonNull(psiTreeChangeEvent.getFile()).getName()) &&
                 this.checkIfEventIsNotTest(psiTreeChangeEvent)
         ) {
-            //check if parent element in new or element changed element is in nap
             if (TestSingleton.getInstance().getPsiElementToTests().containsKey(inMap)) {
-                // get all tests mapped for element
                 HashSet<String> testNames = new HashSet<>(TestSingleton.getInstance().getPsiElementToTests().get(inMap));
-                // add event to events for highlights
                 TestSingleton.getInstance().getTestsForExecution().addAll(testNames);
-                //add event to test method
                 for (String name : testNames) {
                     addCustomElement(element, inMap, name);
                 }
 
-                //if new element add it to map
                 if (!TestSingleton.getInstance().getPsiElementToTests().containsKey(element)) {
                     TestSingleton.getInstance().getPsiElementToTests().put(element, testNames);
                 }
-
             }
         }
     }
 
+    /**
+     * Check if element is test method
+     *
+     * @param psiTreeChangeEvent change element
+     * @return true if element is not method false if it is
+     */
     private boolean checkIfEventIsNotTest(PsiTreeChangeEvent psiTreeChangeEvent) {
         PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
         PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
                 (PsiMethod) psiTreeElement : PsiTreeUtil.getTopmostParentOfType(psiTreeElement, PsiMethod.class);
-        if (parentMethod == null){
+        if (parentMethod == null) {
             return false;
-        }else {
+        } else {
             PsiHandler checkTest = new PsiHandler();
             return !checkTest.isTest(parentMethod);
         }
     }
 
+    /**
+     * check if PSI file is .jva
+     *
+     * @param name file name
+     * @return true if java , false if not
+     */
     private boolean checkIfEventIsInJava(String name) {
         return name.contains(".java");
     }
@@ -115,6 +137,12 @@ public class CodeChangeHandlers {
         }
     }
 
+    /**
+     * check if change element is in method body
+     *
+     * @param psiTreeChangeEvent change element
+     * @return true if it is body false if not
+     */
     private Boolean checkIfEventIsInMethods(PsiTreeChangeEvent psiTreeChangeEvent) {
         PsiElement psiTreeElement = psiTreeChangeEvent.getParent();
         PsiMethod parentMethod = psiTreeElement instanceof PsiMethod ?
@@ -122,6 +150,11 @@ public class CodeChangeHandlers {
         return parentMethod != null;
     }
 
+    /**
+     * handle timer existence
+     *
+     * @param psiTreeChangeEvent event change
+     */
     private void checkTimer(PsiTreeChangeEvent psiTreeChangeEvent) {
         if (this.checkIfEventIsInMethods(psiTreeChangeEvent) &&
                 this.checkIfEventIsInJava(Objects.requireNonNull(psiTreeChangeEvent.getFile()).getName()) &&
@@ -129,24 +162,27 @@ public class CodeChangeHandlers {
         ) {
             if (!PluginSingleton.getInstance().isTestExecution()) {
                 if (PluginSingleton.getInstance().isTimerWorking()) {
-                    // stop timer and start again
                     PluginSingleton.getInstance().getTimer().cancel();
                     PluginSingleton.getInstance().setTimer(new Timer());
-                    ScheduleNewTimer();
                 } else {
-                    // start timer
                     PluginSingleton.getInstance().setTimerWorking(true);
-                    ScheduleNewTimer();
                 }
+                ScheduleNewTimer();
             }
         }
     }
 
+    /**
+     * save all project files
+     */
     private void safeAllFiles() {
         ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication()
                 .runWriteAction(() -> FileDocumentManager.getInstance().saveAllDocuments()));
     }
 
+    /**
+     * schedule new timer
+     */
     private void ScheduleNewTimer() {
         PluginSingleton.getInstance().getTimer().schedule(new TimerTask() {
             @Override
@@ -170,33 +206,22 @@ public class CodeChangeHandlers {
         }, PluginSingleton.TIMER_DELAY * 1000);
     }
 
+    /**
+     * handlerBeforeChildReplacement
+     *
+     * @param psiTreeChangeEvent change event
+     */
     public void handlerBeforeChildReplacement(PsiTreeChangeEvent psiTreeChangeEvent) {
-//        Old child Element : xy ,hashCode : 31266
-//        New child Element : x-y ,hashCode : 34460
-//        Element parent : return xy; ,hashCode : 565900040
-        // TODO Extract element parent
         this.checkTimer(psiTreeChangeEvent);
         PsiElement element_parent = psiTreeChangeEvent.getParent();
         this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
 
-    public void handlerBeforeChildMovement(PsiTreeChangeEvent psiTreeChangeEvent) {
-        // TODO idk what it does
-        this.printEventElements(psiTreeChangeEvent);
-
-    }
-
-    public void handlerBeforeChildrenChange(PsiTreeChangeEvent psiTreeChangeEvent) {
-        // TODO whole class when someone changes, not usable idk
-        this.printEventElements(psiTreeChangeEvent);
-    }
-
-    public void handlerBeforePropertyChange(PsiTreeChangeEvent psiTreeChangeEvent) {
-        // TODO idk what it does
-        this.checkTimer(psiTreeChangeEvent);
-        this.printEventElements(psiTreeChangeEvent);
-    }
-
+    /**
+     * handlerBeforeChildRemoval
+     *
+     * @param psiTreeChangeEvent change event
+     */
     public void handlerBeforeChildRemoval(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         // TODO handle element parent
         this.checkTimer(psiTreeChangeEvent);
@@ -204,20 +229,11 @@ public class CodeChangeHandlers {
         this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
     }
 
-    public void handlerBeforeChildAddition(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        //Element parent : {
-        //            x++;
-        //            return x-y;
-        //        } ,hashCode : 1371802751
-        //Element parent : {
-        //            x++;
-        //            xreturn x-y;
-        //        } ,hashCode : 1371802751
-        // TODO handle parent
-        PsiElement element_parent = psiTreeChangeEvent.getParent();
-        this.handleCodeChange(psiTreeChangeEvent, element_parent, element_parent);
-    }
-
+    /**
+     * handlerChildAdded
+     *
+     * @param psiTreeChangeEvent change event
+     */
     public void handlerChildAdded(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
         this.checkTimer(psiTreeChangeEvent);
         PsiElement element_child = psiTreeChangeEvent.getChild();

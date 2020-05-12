@@ -1,25 +1,28 @@
 package mavenRunner;
 
 import logger.PluginLogger;
-import pluginCommunicationHandler.StartUpActivity;
 import pluginResources.PluginSingleton;
 
 import java.io.IOException;
 
 public class cloverRunner {
-
+    /**
+     * instance of PluginLogger
+     */
     final static PluginLogger logger = new PluginLogger(cloverRunner.class);
 
+    /**
+     * Run clover code instrumentation
+     */
     public static void runClover() throws InterruptedException {
         String pomPath = PluginSingleton.getInstance().getPomPath();
         Process process;
         if (!System.getProperty("os.name").toLowerCase().contains("win")) {
             try {
-                // TODO windows run too, check if is possible to run from clover api
                 String[] exec_cmd = new String[]{"mvn", "-f", pomPath, "clean", "clover:setup", "test", "clover:aggregate", "clover:clover"};
                 process = Runtime.getRuntime().exec(exec_cmd);
             } catch (IOException e) {
-                logger.log(PluginLogger.Level.ERROR,"UNIX : "+ e.getMessage());
+                logger.log(PluginLogger.Level.ERROR, "UNIX : " + e.getMessage());
                 process = null;
             }
             int result = process.waitFor();

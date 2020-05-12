@@ -7,14 +7,18 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
-import com.intellij.vcs.log.Hash;
 import org.jetbrains.annotations.NotNull;
 import pluginResources.TestSingleton;
 
 import java.util.*;
 
 public class PsiHandler {
-
+    /**
+     * get All classes in project
+     *
+     * @param project project file
+     * @return List<PsiClass> of all classes
+     */
     public List<PsiClass> getAllClasses(Project project) {
         String[] classNames = PsiShortNamesCache.getInstance(project).getAllClassNames();
         PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
@@ -44,6 +48,12 @@ public class PsiHandler {
         return methods;
     }
 
+    /**
+     * Check if method is test
+     *
+     * @param psiMethod psi method
+     * @return if method is test return true else false
+     */
     public boolean isTest(@NotNull PsiMethod psiMethod) {
         PsiModifierList psiModifierList = psiMethod.getModifierList();
         PsiAnnotation[] annotations = psiModifierList.getAnnotations();
@@ -56,6 +66,12 @@ public class PsiHandler {
         return false;
     }
 
+    /**
+     * Get all tests method
+     *
+     * @param project project file
+     * @return List<PsiMethod>
+     */
     public List<PsiMethod> getAllTests(Project project) {
         PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
         String[] methodNames = cache.getAllMethodNames();
@@ -74,6 +90,12 @@ public class PsiHandler {
         return methods;
     }
 
+    /**
+     * Find all usage for method
+     *
+     * @param methodChild method to traverse
+     * @return HashSet of Psi methods
+     */
     public HashSet<PsiMethod> traverseBodyToFindAllMethodUsages(PsiElement methodChild) {
         HashSet<PsiMethod> methodCalls = new HashSet<>();
 
@@ -91,6 +113,12 @@ public class PsiHandler {
         return methodCalls;
     }
 
+    /**
+     * finding all methods in class
+     *
+     * @param c                  PSI class
+     * @param integerListHashMap Test names in list
+     */
     public void mapLinesToTests(PsiClass c, HashMap<Integer, HashSet<String>> integerListHashMap) {
         PsiMethod[] methods = c.getAllMethods();
         for (PsiMethod method : methods) {
@@ -100,13 +128,19 @@ public class PsiHandler {
         }
     }
 
-
-    private void addParentElement(PsiElement elem, HashMap<Integer, HashSet<String>> map, Integer lineNum){
+    /**
+     * Add parent element to map
+     *
+     * @param elem    element
+     * @param map     Map
+     * @param lineNum Parent element line number
+     */
+    private void addParentElement(PsiElement elem, HashMap<Integer, HashSet<String>> map, Integer lineNum) {
         PsiElement elemParent = elem.getParent();
-        if (elemParent != null){
+        if (elemParent != null) {
             if (TestSingleton.getInstance().getPsiElementToTests().containsKey(elemParent)) {
                 TestSingleton.getInstance().getPsiElementToTests().get(elemParent).addAll(map.get(lineNum + 1));
-            }else {
+            } else {
                 HashSet<String> newList = new HashSet<String>(map.get(lineNum + 1));
                 TestSingleton.getInstance().getPsiElementToTests().put(elemParent, newList);
             }
@@ -114,7 +148,12 @@ public class PsiHandler {
 
     }
 
-
+    /**
+     * Recursive finding of all elements and mapping them to line number
+     *
+     * @param elem Element
+     * @param map  Map to save
+     */
     public void mapElementToTest(PsiElement elem, HashMap<Integer, HashSet<String>> map) {
         if (elem == null) {
             return;
@@ -122,7 +161,7 @@ public class PsiHandler {
         for (PsiElement child : elem.getChildren()) {
             this.mapElementToTest(child, map);
             Document document = FileDocumentManager.getInstance().getDocument(elem.getContainingFile().getVirtualFile());
-            if (elem.getTextOffset() == -1){
+            if (elem.getTextOffset() == -1) {
                 continue;
             }
             int lineNum = document.getLineNumber(elem.getTextOffset());

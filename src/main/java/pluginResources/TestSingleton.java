@@ -1,11 +1,7 @@
 package pluginResources;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiTreeChangeEvent;
 import test.Event;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,26 +9,36 @@ import java.util.List;
 public class TestSingleton {
     private static TestSingleton INSTANCE = null;
 
-    //
+    /**
+     * map of test classes
+     */
     private HashMap<String, String> testClasses;
-
-    //key = test name, value = list of events
+    /**
+     * map of test name and list of events for that test
+     */
     private HashMap<String, List<Event>> testMethod_CustomEvent;
-    //key = test name, value = list of events
+    /**
+     * map of test name and list of events for that test, ready for execution
+     */
     private HashMap<String, List<Event>> testMethod_CustomEvent_forExecution;
-//    // key = test method name, value = lists of changes
-//    private HashMap<String, List<PsiElement>> testMethod_event;
-//    // copy of testMethod_event hash map, but for execution
-//    private HashMap<String, List<PsiElement>> testMethod_event_forExecution;
 
-    //list of test names for testing
+    /**
+     * test names for execution
+     */
     private HashSet<String> testsForExecution;
 
-
+    /**
+     * Map < Class name, < Line number, List< Tests> >
+     */
     private HashMap<String, HashMap<Integer, HashSet<String>>> coverageByClass;
 
-    // line PsiElement : Array of test names strings
+    /**
+     * Map < PsiELement, List< Tests>
+     */
     private HashMap<PsiElement, HashSet<String>> psiElementToTests;
+    /**
+     * Tests for PSI elements map
+     */
     private HashMap<String, HashSet<PsiElement>> testToPsiElements;
 
     private TestSingleton() {
