@@ -92,8 +92,8 @@ public class MainTestController {
         }
 
 
-
     }
+
 
     public void runAllTests() throws InterruptedException {
         //PluginSingleton.safeAllFiles();
@@ -124,9 +124,15 @@ public class MainTestController {
             priorityQue.add(new PrioritizationValuator(test_name, exec_value, exec_time));
 
         }
-        priorityQue.sort((o1, o2) -> (int) (o1.getHistoryValue() == o2.getHistoryValue() ? o1.getTimeValue() - o2.getTimeValue() :
-                o1.getHistoryValue() - o2.getHistoryValue()));
+//        priorityQue.sort((o1, o2) -> (int) (o1.getHistoryValue() == o2.getHistoryValue() ? o1.getTimeValue() - o2.getTimeValue() :
+//                o1.getHistoryValue() - o2.getHistoryValue()));
 
+        final double THRESHOLD = .0000001;
+        priorityQue.sort((o1, o2) -> (Math.abs(o1.getHistoryValue() - o2.getHistoryValue()) < THRESHOLD &&
+                Math.abs(o1.getTimeValue() - o2.getTimeValue()) < THRESHOLD) ? 0 :
+                (Math.abs(o1.getHistoryValue() - o2.getHistoryValue()) < THRESHOLD) ?
+                        (o1.getTimeValue() > o2.getTimeValue() ? 1 : -1) :
+                        (o1.getHistoryValue() > o2.getHistoryValue() ? 1 : -1));
         // run all tests
         for (PrioritizationValuator test_method : priorityQue) {
             String className = TestSingleton.getInstance().getTestClasses().get(test_method.getTest_name());
