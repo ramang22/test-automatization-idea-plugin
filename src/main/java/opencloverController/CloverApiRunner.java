@@ -6,11 +6,11 @@ import mavenRunner.CustomRunner;
 import pluginResources.PluginSingleton;
 
 
-public class cloverApiRunner implements CustomRunner {
+public class CloverApiRunner implements CustomRunner {
     /**
      * Instance of plugin logger
      */
-    final static PluginLogger logger = new PluginLogger(cloverApiRunner.class);
+    final static PluginLogger logger = new PluginLogger(CloverApiRunner.class);
 
     /**
      * run html reporter from OpenClover api

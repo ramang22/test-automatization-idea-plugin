@@ -7,9 +7,9 @@ import database.DbController;
 import ide.CodeChangeListener;
 import ide.PsiHandler;
 import logger.PluginLogger;
-import opencloverController.cloverApiRunner;
-import mavenRunner.cloverRunner;
-import opencloverController.cloverParser;
+import opencloverController.CloverApiRunner;
+import mavenRunner.CloverRunner;
+import opencloverController.CloverParser;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import pluginResources.PluginSingleton;
@@ -68,16 +68,16 @@ public class StartUpActivity implements StartupActivity {
 
 //        // run mvn clover
         try {
-            cloverRunner.runClover();
+            CloverRunner.runClover();
         } catch (InterruptedException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         // openclover api html report
-        cloverApiRunner.runHtmlReporter();
+        CloverApiRunner.runHtmlReporter();
 
         //run init test coverage
         try {
-            cloverParser.getTestCoverageWithinClasses();
+            CloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
@@ -91,7 +91,7 @@ public class StartUpActivity implements StartupActivity {
             PluginSingleton.getInstance().getPackage_file_paths().add(package_name + "/" + filename + ".js");
         }
         try {
-            cloverParser.getTestCoverageWithinClasses();
+            CloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }

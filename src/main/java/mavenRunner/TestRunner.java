@@ -7,11 +7,11 @@ import pluginResources.PluginSingleton;
 
 import java.io.*;
 
-public class testRunner {
+public class TestRunner {
     /**
      * Instance of PlugginLogger
      */
-    private static PluginLogger logger = new PluginLogger(testRunner.class);
+    private static PluginLogger logger = new PluginLogger(TestRunner.class);
 
     /**
      * Run test with maven
@@ -45,7 +45,7 @@ public class testRunner {
         }
         String output = CustomRunner.getStdInput(process);
         DbController db_controller = new DbController();
-        testRunner runner = new testRunner();
+        TestRunner runner = new TestRunner();
         String time = runner.getExecTime(output);
 
         if (output.contains("BUILD FAILURE")) {

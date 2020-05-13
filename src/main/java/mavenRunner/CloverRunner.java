@@ -5,11 +5,11 @@ import pluginResources.PluginSingleton;
 
 import java.io.IOException;
 
-public class cloverRunner {
+public class CloverRunner {
     /**
      * instance of PluginLogger
      */
-    final static PluginLogger logger = new PluginLogger(cloverRunner.class);
+    final static PluginLogger logger = new PluginLogger(CloverRunner.class);
 
     /**
      * Run clover code instrumentation

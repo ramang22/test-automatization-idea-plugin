@@ -14,11 +14,11 @@ import org.json.*;
 import pluginResources.PluginSingleton;
 import pluginResources.TestSingleton;
 
-public class cloverParser {
+public class CloverParser {
     /**
      * logger instance
      */
-    static final PluginLogger logger = new PluginLogger(cloverParser.class);
+    static final PluginLogger logger = new PluginLogger(CloverParser.class);
 
     /**
      * Read whole file and put it into string
@@ -147,7 +147,7 @@ public class cloverParser {
      * get coverage for package
      */
     public static void getTestCoverageWithinClasses() throws JSONException {
-        cloverParser parser = new cloverParser();
+        CloverParser parser = new CloverParser();
 
         HashSet<String> coveredClasses = PluginSingleton.getInstance().getPackage_file_paths();
         String htmlReportPath = PluginSingleton.getInstance().getClover_html_report_path();

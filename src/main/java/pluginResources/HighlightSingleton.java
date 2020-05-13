@@ -2,7 +2,7 @@ package pluginResources;
 
 
 import com.intellij.psi.PsiElement;
-import highlighter.HighlightedLane;
+import highlighter.HighlightedLine;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,11 +14,11 @@ public class HighlightSingleton {
     /**
      * list of Highlighted Lanes
      */
-    private List<HighlightedLane> highlighted_lanes;
+    private List<HighlightedLine> highlighted_lanes;
     /**
      * list of Highlighted Lanes with gutter
      */
-    private List<HighlightedLane> highlighted_lanes_with_gutter;
+    private List<HighlightedLine> highlighted_lanes_with_gutter;
     /**
      * list of Highlighted methods headers
      */
@@ -50,19 +50,19 @@ public class HighlightSingleton {
         this.methodsHeaders = methodsHeaders;
     }
 
-    public List<HighlightedLane> getHighlighted_lanes_with_gutter() {
+    public List<HighlightedLine> getHighlighted_lanes_with_gutter() {
         return highlighted_lanes_with_gutter;
     }
 
-    public void setHighlighted_lanes_with_gutter(List<HighlightedLane> highlighted_lanes_with_gutter) {
+    public void setHighlighted_lanes_with_gutter(List<HighlightedLine> highlighted_lanes_with_gutter) {
         this.highlighted_lanes_with_gutter = highlighted_lanes_with_gutter;
     }
 
-    public List<HighlightedLane> getHighlighted_lanes() {
+    public List<HighlightedLine> getHighlighted_lanes() {
         return highlighted_lanes;
     }
 
-    public void setHighlighted_lanes(List<HighlightedLane> highlighted_lanes) {
+    public void setHighlighted_lanes(List<HighlightedLine> highlighted_lanes) {
         this.highlighted_lanes = highlighted_lanes;
     }
 

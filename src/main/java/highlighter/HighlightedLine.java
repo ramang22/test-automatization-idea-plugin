@@ -2,7 +2,7 @@ package highlighter;
 
 import com.intellij.openapi.editor.Document;
 
-public class HighlightedLane {
+public class HighlightedLine {
     /**
      * Document where highlight is
      */
@@ -12,7 +12,7 @@ public class HighlightedLane {
      */
     private Integer line_num;
 
-    HighlightedLane(Document doc, Integer line_num){
+    HighlightedLine(Document doc, Integer line_num){
         this.document = doc;
         this.line_num = line_num;
     }

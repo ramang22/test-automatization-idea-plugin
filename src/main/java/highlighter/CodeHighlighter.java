@@ -113,9 +113,9 @@ public class CodeHighlighter {
      */
     private static void saveHighlight(Document document, int line_num, Boolean withGutter) {
         if (withGutter) {
-            HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().add(new HighlightedLane(document, line_num));
+            HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().add(new HighlightedLine(document, line_num));
         } else {
-            HighlightSingleton.getInstance().getHighlighted_lanes().add(new HighlightedLane(document, line_num));
+            HighlightSingleton.getInstance().getHighlighted_lanes().add(new HighlightedLine(document, line_num));
         }
     }
 
@@ -168,13 +168,13 @@ public class CodeHighlighter {
      */
     public static void removeOldHighlights() {
         if (!HighlightSingleton.getInstance().getHighlighted_lanes().isEmpty()) {
-            for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
+            for (HighlightedLine h : HighlightSingleton.getInstance().getHighlighted_lanes()) {
                 int lim_num = h.getLine_num();
                 removeLineHighlight(h.getDocument(), lim_num);
             }
         }
         if (!HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter().isEmpty()) {
-            for (HighlightedLane h : HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter()) {
+            for (HighlightedLine h : HighlightSingleton.getInstance().getHighlighted_lanes_with_gutter()) {
                 removeLineHighlight(h.getDocument(), h.getLine_num());
             }
         }

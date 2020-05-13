@@ -8,7 +8,7 @@ import database.TestResultDb;
 import highlighter.CodeHighlighter;
 import ide.PsiHandler;
 import logger.PluginLogger;
-import opencloverController.cloverParser;
+import opencloverController.CloverParser;
 import org.json.JSONException;
 import pluginResources.HighlightSingleton;
 import pluginResources.PluginSingleton;
@@ -59,16 +59,16 @@ public class MainTestController {
 
         // run mvn clover
         try {
-            cloverRunner.runClover();
+            CloverRunner.runClover();
         } catch (InterruptedException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
         // openclover api html report
-        cloverApiRunner.runHtmlReporter();
+        CloverApiRunner.runHtmlReporter();
 
         //run init test coverage
         try {
-            cloverParser.getTestCoverageWithinClasses();
+            CloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
@@ -82,7 +82,7 @@ public class MainTestController {
             PluginSingleton.getInstance().getPackage_file_paths().add(package_name + "/" + filename + ".js");
         }
         try {
-            cloverParser.getTestCoverageWithinClasses();
+            CloverParser.getTestCoverageWithinClasses();
         } catch (JSONException e) {
             logger.log(PluginLogger.Level.ERROR, e.getMessage());
         }
@@ -142,7 +142,7 @@ public class MainTestController {
         // run all tests
         for (PrioritizationValuator test_method : priorityQue) {
             String className = TestSingleton.getInstance().getTestClasses().get(test_method.getTest_name());
-            testRunner.runTest(className, test_method.getTest_name());
+            TestRunner.runTest(className, test_method.getTest_name());
         }
 
 
