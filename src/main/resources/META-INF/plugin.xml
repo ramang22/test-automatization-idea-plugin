@@ -1,8 +1,12 @@
 <idea-plugin>
     <id>org.rezane.IntelliJ-IDEA-test-run-plugin</id>
     <name>Automatic Unit Tester</name>
-    <version>1.1.1</version>
+    <version>1.1.3</version>
     <vendor email="wibrach@gmail.com" url="github.com/rezane">Rezane studio</vendor>
+    <!-- Description of changes in the latest version of the plugin.
+          Displayed in the "Plugins" settings dialog and the plugin repository Web interface.
+          Simple HTML elements can be included between <![CDATA[  ]]> tags.  -->
+    <change-notes>Initial release of the plugin.</change-notes>
 
     <description><![CDATA[
     Plugin for minimizing running unit tests
