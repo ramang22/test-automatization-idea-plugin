@@ -1,5 +1,8 @@
 package pluginCommunicationHandler;
 
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.psi.*;
@@ -37,7 +40,6 @@ public class StartUpActivity implements StartupActivity {
      */
     @Override
     public void runActivity(@NotNull Project project) {
-
         //setup code change listener
         PsiManager psiManager = PsiManager.getInstance(project);
         //set project variables
@@ -105,5 +107,4 @@ public class StartUpActivity implements StartupActivity {
         }
 
     }
-
 }

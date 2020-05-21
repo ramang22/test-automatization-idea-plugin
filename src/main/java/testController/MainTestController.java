@@ -125,7 +125,9 @@ public class MainTestController {
             }
             double exec_time = 999;
             if (results.size() != 0) {
-                exec_time = Double.parseDouble(results.get(0).getExec_time());
+                if (!results.get(0).getExec_time().isEmpty()){
+                    exec_time = Double.parseDouble(results.get(0).getExec_time());
+                }
             }
             priorityQue.add(new PrioritizationValuator(test_name, exec_value, exec_time));
 

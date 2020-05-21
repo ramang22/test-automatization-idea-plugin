@@ -6,7 +6,7 @@
     <!-- Description of changes in the latest version of the plugin.
           Displayed in the "Plugins" settings dialog and the plugin repository Web interface.
           Simple HTML elements can be included between <![CDATA[  ]]> tags.  -->
-    <change-notes>Initial release of the plugin.</change-notes>
+    <change-notes>Initial release of the plugin. Adding change notes for plugin release</change-notes>
 
     <description><![CDATA[
     Plugin for minimizing running unit tests

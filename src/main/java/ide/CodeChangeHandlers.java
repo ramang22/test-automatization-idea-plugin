@@ -3,6 +3,10 @@ package ide;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTreeChangeEvent;
@@ -187,20 +191,30 @@ public class CodeChangeHandlers {
         PluginSingleton.getInstance().getTimer().schedule(new TimerTask() {
             @Override
             public void run() {
-                logger.log(PluginLogger.Level.INFO, "Starting test sequence.");
-                PluginSingleton.getInstance().setTestExecution(true);
-                try {
-                    safeAllFiles();
-                    testStater.runAllTests();
-                } catch (InterruptedException e) {
-                    logger.log(PluginLogger.Level.ERROR, e.getMessage());
-                }
-                SwingUtilities.invokeLater(() -> {
-                    testStater.runHighlighter();
-                    PluginSingleton.getInstance().setTimerWorking(false);
-                    PluginSingleton.getInstance().setTestExecution(false);
-                    logger.log(PluginLogger.Level.INFO, "Plug-in work done.");
+                ProgressManager.getInstance().run(new Task.Backgroundable(PluginSingleton.getInstance().getProject(), "Testing") {
+                    public void run(@NotNull ProgressIndicator indicator) {
+                        indicator.setIndeterminate(false);
+                        indicator.setText("Plugin working..");
+                        indicator.setFraction(0.1);
+                        logger.log(PluginLogger.Level.INFO, "Starting test sequence.");
+                        PluginSingleton.getInstance().setTestExecution(true);
+                        try {
+                            safeAllFiles();
+                            indicator.setFraction(0.5);
+                            testStater.runAllTests();
+                        } catch (InterruptedException e) {
+                            logger.log(PluginLogger.Level.ERROR, e.getMessage());
+                        }
+                        indicator.setFraction(0.9);
+                        SwingUtilities.invokeLater(() -> {
+                            testStater.runHighlighter();
+                            PluginSingleton.getInstance().setTimerWorking(false);
+                            PluginSingleton.getInstance().setTestExecution(false);
+                            logger.log(PluginLogger.Level.INFO, "Plug-in work done.");
+                        });
+                    }
                 });
+
 
             }
         }, PluginSingleton.TIMER_DELAY * 1000);
