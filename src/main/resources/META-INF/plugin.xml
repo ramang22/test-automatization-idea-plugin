@@ -24,6 +24,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="highlighter.CustomLineMarker"/>
+        <toolWindow id="Logger" secondary="true" icon="AllIcons.General.Modified" anchor="bottom"
+                    factoryClass="pluginCommunicationHandler.CustomToolWindowFactory" />
     </extensions>
 
     <actions>

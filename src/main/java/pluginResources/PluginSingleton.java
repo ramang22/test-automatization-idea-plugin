@@ -3,8 +3,11 @@ package pluginResources;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import pluginCommunicationHandler.MyCustomToolWindow;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Timer;
 
 public class PluginSingleton {
@@ -49,9 +52,11 @@ public class PluginSingleton {
      * tests are in execution
      */
     private boolean testExecution;
-
+    private List<String> logMessages;
+    private MyCustomToolWindow toolWindow;
 
     private PluginSingleton() {
+        this.logMessages = new ArrayList<>();
         this.projectRootFolderPath = "";
         this.pomPath = "";
         this.clover_db_path = "";
@@ -60,6 +65,7 @@ public class PluginSingleton {
         this.timer = new Timer();
         this.timerWorking = false;
         this.testExecution = false;
+        this.toolWindow = null;
     }
 
     public static PluginSingleton getInstance() {
@@ -92,6 +98,14 @@ public class PluginSingleton {
         this.setClover_db_path(projectRootFolderPath + "target/clover/clover.db");
         this.setClover_html_report_path(projectRootFolderPath + "TestPlugin/openclover/");
         this.projectRootFolderPath = projectRootFolderPath;
+    }
+
+    public MyCustomToolWindow getToolWindow() {
+        return toolWindow;
+    }
+
+    public void setToolWindow(MyCustomToolWindow toolWindow) {
+        this.toolWindow = toolWindow;
     }
 
     public String getPomPath() {
@@ -148,5 +162,13 @@ public class PluginSingleton {
 
     public void setTestExecution(boolean testExecution) {
         this.testExecution = testExecution;
+    }
+
+    public List<String> getLogMessages() {
+        return logMessages;
+    }
+
+    public void setLogMessages(List<String> logMessages) {
+        this.logMessages = logMessages;
     }
 }

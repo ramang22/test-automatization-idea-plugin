@@ -105,6 +105,11 @@ public class PluginLogger {
             System.out.println(this.getLogString(date_string, level, msg));
         }
         this.logInfoFile(level, date_string, msg);
+        PluginSingleton.getInstance().getLogMessages().add(this.getLogString(date_string, level, msg));
+        if (PluginSingleton.getInstance().getToolWindow() != null){
+            PluginSingleton.getInstance().getToolWindow().getLogs();
+
+        }
     }
 
     /**
